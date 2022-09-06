@@ -1,0 +1,13 @@
+1. Escreva uma função que verifique se uma dada sequência
+seq[0..k] de vértices de um grafo é um caminho. A função
+devolve 1 caso a sequencia seja um caminho e 0 caso contrário.
+Faça duas versões do método:supõe que o grafo dado por sua
+matriz de adjacência e outra supõe que o grafo é dado por listas
+de adjacência.
+
+2. Escreva uma função que verifique se uma dada sequência
+seq[0..k] de vértices de um grafo é um caminho simples. A
+função devolve 1 caso a sequencia seja um caminho e 0 caso
+contrário. Faça duas versões do método:supõe que o grafo dado
+por sua matriz de adjacência e outra supõe que o grafo é dado
+por listas de adjacência.

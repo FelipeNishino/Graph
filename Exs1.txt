@@ -1,0 +1,66 @@
+1. Construa uma classe Digrafo para representar o grafo orien-
+tado utilizando a matriz de adjacência.
+
+2. Em quais momentos é mais vantajoso utilizar uma matriz de
+adjacência em relação uma lista de adjacência?
+
+3. Escreva um método grau entrada() que calcula o grau de
+entrada de um vértice v de um digrafo. Escreva também a função
+grau saida() que calcula o grau de saída de v no digrafo. As
+funções devem ser implementadas na classe Digrafo que utiliza
+uma matriz de adjacência
+
+4. Escreva uma função que decida se dois grafos são iguais.
+A função deve ser implementada para classe Grafo que utiliza
+matriz e listas de adjacência.
+
+5. Escreva uma função que converta uma representação de grafo
+em outra, por exemplo, converta um grafo armazenado em uma
+matriz de adjacência em uma lista de adjacência.
+
+6. Escreva uma função que recebe um digrafo armazenado em
+listas de adjacência e inverta as listas de todos os vértices do
+grafo. Por exemplo, se os 4 vizinhos de um certo vértice u
+aparecem na lista adj[u] na ordem v, w, x y, então depois da
+aplicação da função a lista deve conter os mesmos vértices na
+ordem y, w, x e y.
+
+7. Um grafo pode ser armazenado em um arquivo com o seguinte
+formato:
+6
+8
+0 1
+0 5
+1 0
+1 5
+2 4
+3 1
+4 3
+3 5
+Onde na primeira linha contém um inteiro V (vértice), na se-
+gunda contém um inteiro A (arestas) e nas demais linha contém
+dois inteiros pertencentes ao intervalo 0 . . V − 1. Se interpretar-
+mos cada linha do arquivo como uma aresta, podemos dizer que
+o arquivo define um grafo com vértices 0 . . V − 1. Escreva uma
+função que receba um nome de arquivo com o formato acima e
+construa uma representação (matriz e listas de adjacência) do
+grafo.
+
+8. Escreva uma função que receba um dígrafo e um vértice
+como parâmetro e retorne 1 se vértice for uma fonte (grau de
+saída maior que zero e grau de entrada igual a 0), ou 0 caso
+contrário. A função deve ser implementada para a classe Grafo
+que utilizam matriz e listas de adjacência.
+
+9. Escreva uma função que receba um dígrafo e um vértice
+como parâmetro, retorne 1 se vértice for uma sorvedouro (grau
+de entrada maior que zero e grau de saída igual a 0), ou 0 caso
+contrário. A função deve ser implementada para a classe Grafo
+que utiliza matriz e listas de adjacência.
+
+10. Escreva uma função que retorna 1 se o dígrafo for simétrico
+e 0 caso contrário. Um dígrafo é simétrico se cada uma das
+arestas é anti-paralela a outra. A função deve ser implementada
+para classe Grafo que utilizam matriz e listas de adjacência.
+Exemplo: o grafo G = (V, E), com V = {1, 2, 3} e arestas E =
+{(1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2), } é um dígrafo simétrico.
