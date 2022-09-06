@@ -21,9 +21,9 @@ matriz de adjacência em uma lista de adjacência.
 6. Escreva uma função que recebe um digrafo armazenado em
 listas de adjacência e inverta as listas de todos os vértices do
 grafo. Por exemplo, se os 4 vizinhos de um certo vértice u
-aparecem na lista adj[u] na ordem v, w, x y, então depois da
+aparecem na lista adj[u] na ordem v, w, x, y, então depois da
 aplicação da função a lista deve conter os mesmos vértices na
-ordem y, w, x e y.
+ordem y, x, w e v.
 
 7. Um grafo pode ser armazenado em um arquivo com o seguinte
 formato:
