@@ -1,11 +1,15 @@
 #include <array>
 #include <iostream>
-#include <ifstream>
+#include <fstream>
 #include <vector>
 #include <list>
 #include <string>
+#include <tuple>
+#include <algorithm>
+#include <numeric>
 
 using namespace std;
+#include "include/list_graph.h"
 #include "include/matrix_graph.h"
 
 MatrixGraph::MatrixGraph(int v) {
@@ -111,9 +115,32 @@ bool MatrixGraph::is_symmetrical() {
 	// {(1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2), }
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
-			if (g.adj_matrix[i][j] != adj_matrix[j][i])
+			if (adj_matrix[i][j] != adj_matrix[j][i])
 				return false;
 		}
+	}
+	return true;
+}
+
+bool MatrixGraph::is_path(std::vector<int> seq) {
+	if (seq.empty()) return false;
+	
+	int current = seq.front();
+	for (auto it=++(seq.begin()); it!=seq.end(); current = *it, ++it) {
+		if (adj_matrix[current][*it]) continue;
+		return false;
+	}
+	return true;
+}
+
+
+bool MatrixGraph::is_simple_path(std::vector<int> seq) {
+	if (seq.empty()) return false;
+	std::vector<bool> visited(n, false);
+	int current = seq.front();
+	for (auto it=++(seq.begin()); it!=seq.end(); current = *it, visited[current] = true, ++it) {
+		if (adj_matrix[current][*it] && !visited[*it]) continue;
+		return false;
 	}
 	return true;
 }
@@ -128,12 +155,73 @@ bool MatrixGraph::travel_to(int o, int t) {
 	return false;
 }
 
+// DFS(G)
+// 1 para cada vértice u em V (G) faça
+// 2 marque u como não visitado
+// 3 para cada vértice u em V (G) faça
+// 4 se u não foi visitado então
+// 5 DFS-visita(G, u)
+
+void MatrixGraph::DFS(std::vector<bool> visitado) {
+	if (visitado.size() == 0) visitado = vector<bool>(n, false);
+	// for (auto const &v : std::generate_n(vector<int>{}, 10, [](int n){n++;})) {
+	for (auto const &vp : [](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0);return v;}(n)) {
+		if (!visitado[vp]) visit(visitado, vp);
+	}
+}
+
+// DFS-visita(G, u)
+// 1 marque u como visitado
+// 2 para cada vértice w em adj(u) faça
+// 3 se w não foi visitado então
+// 4 DFS-visita(G, w)
+
+void MatrixGraph::visit(std::vector<bool> visitado, int v) {
+	cout << "Visitando " << v << '\n';
+	visitado[v] = true;
+	for (auto const &vp : [](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0);return v;}(n)) {
+		if (!visitado[vp] && adj_matrix[v][vp]) visit(visitado, vp);
+	}
+}
+
 bool MatrixGraph::has_cicle() {
 	for (int i = 0; i < n; ++i) {
 		if (MatrixGraph::indegree(i) == 0) continue;
 		if (MatrixGraph::travel_to(i, i)) return true;
 	}
 	return false;
+}
+
+void MatrixGraph::topologic_sort() {
+	std::list<std::list<int>> sublists;
+	sublists.push_back({});
+	int vo;
+	
+	for (int i = 0; i < n; ++i) {
+		if (!vertex_is_source(i)) continue;
+	}
+
+}
+
+// std::list<int> find_equivalent_vertices(MatrixGraph g, int v) {
+// 	int i, j;
+
+// 	for (i = 0; i < g.n; i++) {
+// 		bool eq = true;
+// 		for (j = 0; j < g.n; j++) {
+
+// 		}	
+// 	}
+// }
+
+MatrixGraph induced_subgraph(MatrixGraph g) {
+	
+
+	return g;
+}
+
+MatrixGraph edge_induced_subgraph(MatrixGraph g) {
+	return g;
 }
 
 void MatrixGraph::display() {

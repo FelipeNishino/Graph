@@ -2,6 +2,7 @@
 #define GRAPH_LISTGRAPH_H
 
 #include <list>
+#include <string>
 /*
 class _Graph {
 public:
@@ -24,7 +25,7 @@ public:
 
   ListGraph(int v);
   ListGraph(MatrixGraph g);
-  ListGraph(string filename);
+  ListGraph(std::string filename);
   void insert_edge(int v1, int v2);
   void remove_edge(int v1, int v2);
   int indegree(int vertex);

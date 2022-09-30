@@ -1,9 +1,12 @@
 #include <array>
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <list>
+#include <string>
 
 using namespace std;
+#include "include/matrix_graph.h"
 #include "include/list_graph.h"
 
 ListGraph::ListGraph(int v) {
@@ -31,7 +34,8 @@ ListGraph::ListGraph(MatrixGraph g) {
 }
 
 ListGraph::ListGraph(string filename) {
-	ifstream file(filename);
+	std::ifstream file;
+	file.open(filename);
 	if (file.fail()) {
 		std::cout << "Erro ao abrir arquivo " << filename;
 		return;
@@ -114,6 +118,7 @@ int ListGraph::outdegree(int vertex) {
 			return inner_list.size();
 		j++;
 	}
+	return 0;
 }
 
 bool ListGraph::is_equal(ListGraph g) {
@@ -139,11 +144,11 @@ bool ListGraph::vertex_is_connected_to(int v1, int v2) {
 	int j = 0;
 	for (auto const &inner_list : adj_list) {
 		if (v1 != j) continue;
-		for (auto const &val : inner_list) {
-			if (val == v2) return true
-		}
-		return false
+		for (auto const &val : inner_list)
+			if (val == v2) return true;
+		break;
 	}
+	return false;
 }
 
 bool ListGraph::is_symmetrical() {
