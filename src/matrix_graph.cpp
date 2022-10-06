@@ -1,4 +1,5 @@
 #include <array>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -7,10 +8,10 @@
 #include <tuple>
 #include <algorithm>
 #include <numeric>
+#include "include/list_graph.hpp"
+#include "include/matrix_graph.hpp"
 
-using namespace std;
-#include "include/list_graph.h"
-#include "include/matrix_graph.h"
+using std::vector, std::string;
 
 MatrixGraph::MatrixGraph(int v) {
 	n = v;
@@ -38,7 +39,7 @@ MatrixGraph::MatrixGraph(ListGraph g) {
 }
 
 MatrixGraph::MatrixGraph(string filename) {
-	ifstream file(filename);
+	std::ifstream file(filename);
 	if (file.fail()) {
 		std::cout << "Erro ao abrir arquivo " << filename;
 		return;
@@ -145,6 +146,57 @@ bool MatrixGraph::is_simple_path(std::vector<int> seq) {
 	return true;
 }
 
+bool MatrixGraph::has_path(int v0, int v1) {
+	DFSLambdas dfsl;
+	std::vector<int> nums = {v0, v1};
+	bool res = false;
+	
+	dfsl.on_end = [&nums, &res](int origin, int v, int d) {
+		// std::cout << "origin " << origin << " atual " << v << " checando " << nums[0] << " e " << nums[1] << " depth " << d << '\n';
+		res |= (nums[0] == origin && nums[1] == v);
+	};
+	DFS(dfsl, v0);
+
+	return res;
+}
+
+void MatrixGraph::show_path(int v0, int v1) {
+	DFSLambdas dfsl;
+	std::vector<int> nums = {v0, v1};
+	std::vector<int> path{n};
+	bool res = false;
+
+	dfsl.on_step = [&path, &res](int origin, int v, int d) {
+		// std::cout << "origin " << origin << " atual " << v << " checando " << nums[0] << " e " << nums[1] << " depth " << d << '\n';
+		// res |= (nums[0] == origin && nums[1] == v);
+		std::cout << "Adicionou " << v << '\n';
+		if (!res) path.push_back(v);
+	};
+	dfsl.on_end = [&nums, &res](int origin, int v, int d) {
+		// std::cout << "origin " << origin << " atual " << v << " checando " << nums[0] << " e " << nums[1] << " depth " << d << '\n';
+		std::cout << "Vai testar se chegou, está no " << v << '\n';
+		res |= (nums[0] == origin && nums[1] == v);
+		if (nums[0] == origin && nums[1] == v) {
+			std::cout << "Chegou!\n";
+		}
+	};
+	dfsl.on_return = [&path, &res](int origin, int v, int d) {
+		// std::cout << "origin " << origin << " atual " << v << " checando " << nums[0] << " e " << nums[1] << " depth " << d << '\n';
+		std::cout << "Removeu " << path.back() << '\n';
+		if (!res) path.erase(path.end());
+	};
+
+	DFS(dfsl, v0);
+
+	if (res) {
+		std::cout << "Caminho encontrado de " << v0 << " a " << v1 << ":";
+		for (auto const &i : path) {
+			std::cout << " " << i;
+		}
+		std::cout << '\n';
+	}
+}
+
 bool MatrixGraph::travel_to(int o, int t) {
 	for (int i = 0; i < n; ++i) {
 		if (adj_matrix[o][i]) {
@@ -155,34 +207,7 @@ bool MatrixGraph::travel_to(int o, int t) {
 	return false;
 }
 
-// DFS(G)
-// 1 para cada vértice u em V (G) faça
-// 2 marque u como não visitado
-// 3 para cada vértice u em V (G) faça
-// 4 se u não foi visitado então
-// 5 DFS-visita(G, u)
 
-void MatrixGraph::DFS(std::vector<bool> visitado) {
-	if (visitado.size() == 0) visitado = vector<bool>(n, false);
-	// for (auto const &v : std::generate_n(vector<int>{}, 10, [](int n){n++;})) {
-	for (auto const &vp : [](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0);return v;}(n)) {
-		if (!visitado[vp]) visit(visitado, vp);
-	}
-}
-
-// DFS-visita(G, u)
-// 1 marque u como visitado
-// 2 para cada vértice w em adj(u) faça
-// 3 se w não foi visitado então
-// 4 DFS-visita(G, w)
-
-void MatrixGraph::visit(std::vector<bool> visitado, int v) {
-	cout << "Visitando " << v << '\n';
-	visitado[v] = true;
-	for (auto const &vp : [](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0);return v;}(n)) {
-		if (!visitado[vp] && adj_matrix[v][vp]) visit(visitado, vp);
-	}
-}
 
 bool MatrixGraph::has_cicle() {
 	for (int i = 0; i < n; ++i) {
@@ -226,11 +251,55 @@ MatrixGraph edge_induced_subgraph(MatrixGraph g) {
 
 void MatrixGraph::display() {
 	for(int i = 0; i < this->n; i++) {
-		cout << "Vertex " << i << " - ";
+		std::cout << "Vertex " << i << " - ";
 		for (auto const &val : adj_matrix[i]) {
-			cout << val << ", ";
+			std::cout << val << ", ";
 		}
-		cout << endl;
+		std::cout << '\n';
 	}
-	cout << endl;
+	std::cout << '\n';
+}
+
+// DFS(G)
+// 1 para cada vértice u em V (G) faça
+// 2 marque u como não visitado
+// 3 para cada vértice u em V (G) faça
+// 4 se u não foi visitado então
+// 5 DFS-visita(G, u)
+
+void MatrixGraph::DFS(DFSLambdas dfsl, int origin, int depth, std::vector<bool> visitado){
+	if (visitado.size() == 0) visitado = vector<bool>(n, false);
+	
+	for (auto const &vp : [origin](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0); v.erase(v.begin() + origin), v.insert(v.begin(), origin);return v;}(n)) {
+		if (!visitado[vp]) visit(dfsl, vp, depth, visitado, vp);
+	}
+}
+
+// DFS-visita(G, u)
+// 1 marque u como visitado
+// 2 para cada vértice w em adj(u) faça
+// 3 se w não foi visitado então
+// 4 DFS-visita(G, w)
+
+void MatrixGraph::visit(DFSLambdas dfsl, int origin, int depth, std::vector<bool> &visitado, int v) {
+	std::cout << "origin "<< origin << " visitando " << v << '\n';
+	visitado[v] = true;
+	bool visitou = false;
+	dfsl.on_step(origin, v, depth);
+	for (auto const &vp : [](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0);return v;}(n)) {
+		std::cout << "testando " << vp << '\n';
+		display();
+		if (!visitado[vp] && adj_matrix[v][vp]) {
+			std::cout << "vai visitar " << vp << '\n';
+
+			visit(dfsl, origin, depth + 1, visitado, vp);
+			visitou = true;
+		}
+		else {
+			std::cout << "Não visitou " << vp << '\n';
+		}
+	}
+	if (!visitou)
+		dfsl.on_end(origin, v, depth);
+	dfsl.on_return(origin, v, depth);
 }

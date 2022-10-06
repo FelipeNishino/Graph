@@ -6,8 +6,8 @@
 #include <string>
 
 using namespace std;
-#include "include/matrix_graph.h"
-#include "include/list_graph.h"
+#include "include/matrix_graph.hpp"
+#include "include/list_graph.hpp"
 
 ListGraph::ListGraph(int v) {
 	n = v;
