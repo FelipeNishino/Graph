@@ -6,8 +6,8 @@
 #include <string>
 
 using namespace std;
-#include "include/matrix_graph.hpp"
-#include "include/list_graph.hpp"
+#include "matrix_graph.hpp"
+#include "list_graph.hpp"
 
 ListGraph::ListGraph(int v) {
 	n = v;
@@ -64,13 +64,11 @@ ListGraph::ListGraph(string filename) {
 
 void ListGraph::insert_edge(int v1, int v2) {
 	int j = 1;
-	bool control = false;
 	if (v1 > n || v2 > n)
 		return;
 	for (auto &inner_list : adj_list) {
 		if (j == v1) {
 			for (auto const &val : inner_list) {
-  				// control &= val == v2;
 				if (val == v2)
 					return;
 			}
@@ -88,7 +86,7 @@ void ListGraph::remove_edge(int v1, int v2) {
 		return;
 	for (auto &inner_list : adj_list) {
 		if (j == v1) {
-			int prev_size = inner_list.size();
+			unsigned int prev_size = inner_list.size();
 			inner_list.remove_if([v2](int n) { return n == v2; });
 
 			if (prev_size != inner_list.size()) {

@@ -8,8 +8,9 @@
 #include <tuple>
 #include <algorithm>
 #include <numeric>
-#include "include/list_graph.hpp"
-#include "include/matrix_graph.hpp"
+#include "list_graph.hpp"
+#include "matrix_graph.hpp"
+#include "logger.hpp"
 
 using std::vector, std::string;
 
@@ -220,12 +221,11 @@ bool MatrixGraph::has_cicle() {
 void MatrixGraph::topologic_sort() {
 	std::list<std::list<int>> sublists;
 	sublists.push_back({});
-	int vo;
+	// int vo;
 	
 	for (int i = 0; i < n; ++i) {
 		if (!vertex_is_source(i)) continue;
 	}
-
 }
 
 // std::list<int> find_equivalent_vertices(MatrixGraph g, int v) {
@@ -240,8 +240,6 @@ void MatrixGraph::topologic_sort() {
 // }
 
 MatrixGraph induced_subgraph(MatrixGraph g) {
-	
-
 	return g;
 }
 
