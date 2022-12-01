@@ -13,6 +13,13 @@ Implementação de uma estrutura de grafos em c++.
 - [Lista 8](#lista-8)
 - [Lista 9](#lista-9)
 - [Lista 10](#lista-10)
+- [Lista 11](#lista-11)
+- [Lista 12](#lista-12)
+- [Lista 13](#lista-13)
+
+### Grafo de exemplo
+
+![Grafo de exemplo](exampleGraph.png "Grafo de exemplo")
 
 ## Lista 1
 
@@ -265,3 +272,19 @@ utilizando cores
 2. Escreva uma função que dado um grafo dirigido com custos positivos associados aos vértices (e não às arestas) encontra um caminho de custo mínimo entre o vértice s até o vértice t. O custo de um caminho num tal grafo é a soma dos pesos dos vértices do caminho. Adapte o algoritmo de Dijkstra para resolver esse problema. Faça duas versões da função: uma supõe que o grafo é representado por uma matriz de adjacência e outra supõe que o grafo é representado por listas de adjacência.
 
 - Implemente o Algoritmo de Djikstra com fila de prioridades.
+
+## Lista 11
+
+- Implemente uma função de relaxamento para um grafo com peso nas arestas
+
+- Implemente o Algoritmo de Bellman-Ford
+
+## Lista 12
+
+- Implemente o Algoritmo de Floyd-Warshall
+
+## Lista 13
+
+- Implemente o Algoritmo de Prim
+
+- Implemente o Algoritmo de Kruskal
