@@ -51,6 +51,14 @@ class MatrixGraph {
         DFSLambdas() : on_end(fnulla), on_step(fnulla), on_skip(fnulla), on_return_to_root(fnullb), on_return(fnulla), after_visit(fnulla){};
     };
 
+    struct BFSLambdas {
+        std::function<void(int, int)> on_entry;
+        std::function<void(int, int)> on_not_entry;
+        std::function<bool(int, int)> entry_condition;
+        std::function<void(int)> on_exit;
+        BFSLambdas() : on_entry(fnullc), on_not_entry(fnullc), on_exit(fnulld){};
+    };
+
     int v_count; // vertex count
     int e_count; // edge count
     std::vector<int> edges_per_vertex; // edge count
@@ -58,6 +66,8 @@ class MatrixGraph {
     std::vector<std::vector<int>> adj_matrix;
     static const inline std::function<void(int, int, int, int)> fnulla = [](int a, int b, int c, int d) {};
     static const inline std::function<void(int, bool)> fnullb = [](int a, bool b) {};
+    static const inline std::function<void(int, int)> fnullc = [](int a, int b) {};
+    static const inline std::function<void(int)> fnulld = [](int a) {};
     
     // LISTA 1
     MatrixGraph(int _n, bool _directed = true);
@@ -130,6 +140,10 @@ class MatrixGraph {
     void short_hamiltonian_path(); // EX 5
     // void DFS_colors();
 
+    // LISTA 9
+    void BFS(BFSLambdas bfsl, int o);
+    void BFS_visit(int o);
+    void BFS_color(int o);
     void display();
     void display_visitados(std::vector<bool> &visitado);
     std::vector<int> make_vertex_sequence();
@@ -144,8 +158,8 @@ class MatrixGraph {
     que explicam em que momento cada função é executada.
     */
     void DFS(DFSLambdas &dfsl, int origin = 0, int depth = 0);
-    void visit(DFSLambdas &dfsl, int origin, int depth, int v0, int v);
-    void DFS_visita();
+    void DFS_recursion(DFSLambdas &dfsl, int origin, int depth, int v0, int v);
+    void DFS_visit();
     bool DFS_colors();
     bool is_adjacent(int v, int w);
     bool visit_colors(std::vector<int> &colors, int v);

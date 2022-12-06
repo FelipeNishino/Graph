@@ -649,16 +649,74 @@ void MatrixGraph::short_hamiltonian_path() {
 
 }
 
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// Lista 9
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void MatrixGraph::BFS(BFSLambdas bfsl, int o) {
+    std::queue<int> q;
+    // std::vector<bool> visitado(v_count, false);
+    q.push(o);
+    int v;
+    while (!q.empty()) {
+        v = q.front();
+        q.pop();
+        for (auto w : get_adj_vertices(v)) {
+            if (bfsl.entry_condition(v, w)) {
+                bfsl.on_entry(v, w);
+                q.push(w);
+            } else {
+                bfsl.on_not_entry(v, w);
+            }
+        }
+        bfsl.on_exit(v);
+    }
+}
+
+void MatrixGraph::BFS_visit(int o) {
+    BFSLambdas bfsl;
+    std::vector<bool> visitados(v_count, false);
+    bfsl.entry_condition = [&visitados](int u, int v)->bool {
+        return !visitados[v];
+	};
+	bfsl.on_entry = [&visitados](int u, int v) {
+    	visitados[v] = true;
+        std::cout << "Visitou o vértice " << v << '\n';
+	};
+
+    BFS(bfsl, o);
+}
+
+void MatrixGraph::BFS_color(int o) {
+    BFSLambdas bfsl;
+    std::vector<int> colors(v_count, 0);
+    std::vector<int> parents(v_count, -1);
+    colors[o] = 1;
+    
+    bfsl.entry_condition = [&colors](int u, int v)->bool {
+        return colors[v] == 0;
+	};
+	bfsl.on_entry = [&colors, &parents](int u, int v) {
+    	colors[v] = 1;
+        parents[v] = u;
+        std::cout << "Visitou o vértice " << v << '\n';
+	};
+    bfsl.on_exit = [&colors](int v) {
+    	colors[v] = 2;
+	};
+
+    BFS(bfsl, o);
+}
+
 void MatrixGraph::DFS(DFSLambdas &dfsl, int origin, int depth){	
     bool condition;
 	for (auto const &v : [origin](int n)->vector<int>{vector<int> vec(n); std::iota(vec.begin(), vec.end(), 0); vec.erase(vec.begin() + origin), vec.insert(vec.begin(), origin);return vec;}(v_count)) {
         condition = dfsl.entry_condition(origin, -1, v, depth);
-		if (condition) visit(dfsl, origin, depth, -1, v);
+		if (condition) DFS_recursion(dfsl, origin, depth, -1, v);
         dfsl.on_return_to_root(v, condition);
 	}
 }
 
-void MatrixGraph::visit(DFSLambdas &dfsl, int origin, int depth, int u, int v) {
+void MatrixGraph::DFS_recursion(DFSLambdas &dfsl, int origin, int depth, int u, int v) {
     Logger::log(Logger::LOG_DEBUG, "origin %d, visitando %d", origin, v);
 	bool did_entry = false;
     Logger::log(Logger::LOG_DEBUG, "Vai executar on step");
@@ -670,7 +728,7 @@ void MatrixGraph::visit(DFSLambdas &dfsl, int origin, int depth, int u, int v) {
         if (dfsl.entry_condition(origin, v, w, depth)) {
             Logger::log(Logger::LOG_DEBUG, "vai visitar %d", w);
 
-            visit(dfsl, origin, depth + 1, v, w);
+            DFS_recursion(dfsl, origin, depth + 1, v, w);
             did_entry = true;
             dfsl.after_visit(origin, v, w, depth);
         }
@@ -687,7 +745,7 @@ void MatrixGraph::visit(DFSLambdas &dfsl, int origin, int depth, int u, int v) {
 	dfsl.on_return(origin, u, v, depth);
 }
 
-void MatrixGraph::DFS_visita(){
+void MatrixGraph::DFS_visit(){
 	DFSLambdas dfsl;
     std::vector<bool> visitado = vector<bool>(v_count, false);
   

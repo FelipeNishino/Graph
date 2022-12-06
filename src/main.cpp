@@ -614,6 +614,60 @@ void test_eulerian() {
     // g1.short_hamiltonian_path();
 }
 
+void test_bfs() {
+    // Ex 1
+    MatrixGraph g1(6);
+    g1.insert_edge(0, 2);
+    g1.insert_edge(0, 3);
+    g1.insert_edge(0, 4);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(1, 4);
+    g1.insert_edge(2, 4);
+    g1.insert_edge(3, 4);
+    g1.insert_edge(3, 5);
+    g1.insert_edge(4, 5);
+    g1.insert_edge(5, 1);
+
+    std::cout << "g1:\n";
+    g1.display();
+    g1.BFS_visit(0);
+
+    // Ex 2
+    MatrixGraph g2(8, false);
+    g2.insert_edge(0, 2);
+    g2.insert_edge(2, 6);
+    g2.insert_edge(6, 4);
+    g2.insert_edge(4, 5);
+    g2.insert_edge(5, 0);
+    g2.insert_edge(0, 7);
+    g2.insert_edge(7, 1);
+    g2.insert_edge(7, 4);
+    g2.insert_edge(3, 4);
+    g2.insert_edge(3, 5);
+
+    std::cout << "g2:\n";
+    g2.display();
+    g2.BFS_visit(0);
+
+    // Ex 4
+    MatrixGraph g4(8, false);
+    g4.insert_edge(0, 1);
+    g4.insert_edge(0, 4);
+    g4.insert_edge(1, 5);
+    g4.insert_edge(2, 3);
+    g4.insert_edge(2, 5);
+    g4.insert_edge(2, 6);
+    g4.insert_edge(3, 6);
+    g4.insert_edge(3, 7);
+    g4.insert_edge(5, 6);
+    g4.insert_edge(6, 7);
+    
+    std::cout << "g4:\n";
+    g4.display();
+    g4.BFS_color(1);
+    // std::cout << "O grafo g2" << (!g2.is_eulerian() ? " não " : " ") << "é euleriano.\n";
+}
+
 int main(int argc, char* argv[]) {
     Logger::set_output_level(Logger::LOG_ERROR);
 
@@ -645,6 +699,8 @@ int main(int argc, char* argv[]) {
     // test_bridge_detection();
     // test_articulation_detection();
     // LISTA 8
-    test_eulerian();
+    // test_eulerian();
+    // LISTA 9
+    test_bfs();
     return 0;
 }
