@@ -51,6 +51,13 @@ class MatrixGraph {
         DFSLambdas() : on_end(fnulla), on_step(fnulla), on_skip(fnulla), on_return_to_root(fnullb), on_return(fnulla), after_visit(fnulla){};
     };
 
+    /*
+    Momentos de execução:
+    on_entry: Quando a BFS entra em um vértice
+    on_not_entry: Quando um vértice não passa na condição de visita
+    entry_condition: Função que computa a condição de entrada em um vértice
+    on_exit: Quando um vértice tem todos os seus adjacentes processados
+    */
     struct BFSLambdas {
         std::function<void(int, int)> on_entry;
         std::function<void(int, int)> on_not_entry;
@@ -141,6 +148,11 @@ class MatrixGraph {
     // void DFS_colors();
 
     // LISTA 9
+    /*
+    Similar a função de DFS, a função de dbfs foi implementada de maneira genérica.
+    A definição da struct BFSLambdas tem comentários que explicam em que momento 
+    cada função é executada.
+    */
     void BFS(BFSLambdas bfsl, int o);
     void BFS_visit(int o);
     void BFS_color(int o);
