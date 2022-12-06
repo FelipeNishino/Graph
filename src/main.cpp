@@ -576,6 +576,44 @@ void test_articulation_detection() {
     g4.articulation_detection();
 }
 
+void test_eulerian() {
+    MatrixGraph g1 = MatrixGraph(5, false);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(0, 2);
+    g1.insert_edge(0, 3);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(1, 3);
+    g1.insert_edge(2, 3);
+    g1.insert_edge(2, 4);
+    g1.insert_edge(3, 4);
+    std::cout << "g1:\n";
+    g1.display();
+    std::cout << "O grafo g1" << (!g1.is_eulerian() ? " não " : " ") << "é euleriano.\n";
+    std::cout << "O grafo g1" << (!g1.has_eulerian_trail() ? " não " : " ") << "possui trilha euleriana.\n";
+    std::cout << "Algoritmo de Fleury(g1):\n";
+    g1.fleury();
+    MatrixGraph g2 = MatrixGraph(5, false);
+    g2.insert_edge(0, 1);
+    g2.insert_edge(0, 2);
+    g2.insert_edge(0, 3);
+    g2.insert_edge(0, 4);
+    g2.insert_edge(1, 2);
+    g2.insert_edge(1, 3);
+    g2.insert_edge(1, 4);
+    g2.insert_edge(2, 3);
+    g2.insert_edge(2, 4);
+    g2.insert_edge(3, 4);
+    g2.insert_edge(4, 0);
+    std::cout << "g2:\n";
+    g2.display();
+    std::cout << "O grafo g2" << (!g2.is_eulerian() ? " não " : " ") << "é euleriano.\n";
+    std::cout << "O grafo g2" << (!g2.has_eulerian_trail() ? " não " : " ") << "possui trilha euleriana.\n";
+    std::cout << "Algoritmo de Fleury(g2):\n";
+    g2.fleury();
+    // g1.hierholzer();
+    // g1.short_hamiltonian_path();
+}
+
 int main(int argc, char* argv[]) {
     Logger::set_output_level(Logger::LOG_ERROR);
 
@@ -605,6 +643,8 @@ int main(int argc, char* argv[]) {
     // test_bipartition();
     // LISTA 7
     // test_bridge_detection();
-    test_articulation_detection();
+    // test_articulation_detection();
+    // LISTA 8
+    test_eulerian();
     return 0;
 }

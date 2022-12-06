@@ -6,6 +6,7 @@
 #include <list>
 #include <string>
 #include <stack>
+#include <queue>
 #include <tuple>
 #include <algorithm>
 #include <numeric>
@@ -586,18 +587,61 @@ void MatrixGraph::articulation_detection() {
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 bool MatrixGraph::is_eulerian() {
-
+    for (auto v : make_vertex_sequence()) {
+        if (outdegree(v) % 2 == 1) return false;
+    }
+    return true;
 }
 
-bool MatrixGraph::has_eulerian_path() {
-
+bool MatrixGraph::has_eulerian_trail() {
+    int odds{};
+    for (auto v : make_vertex_sequence()) {
+        if (outdegree(v) % 2 == 1) odds++;
+        if (odds > 2) { return false; }
+    }
+    return true;
 }
 
-bool MatrixGraph::fleury() {
-
+void MatrixGraph::fleury() {
+    std::queue<int> odds;
+    for (auto v : make_vertex_sequence()) {
+        if (outdegree(v) % 2 == 1) odds.push(v);
+    }
+    if (odds.size() > 2) {
+        std::cout << "O grafo não possui trilha de euler\n";
+        return;
+    }
+    int origin = (odds.empty() ? 0 : odds.front());
+    std::vector<int> euler_path{};
+    eulerian_trail(origin, euler_path);
+    std::cout << "Trilha euleriana: ";
+    for (auto v : euler_path) {
+        std::cout << " -> " << v;
+    }
+    std::cout << '\n';
 }
 
-bool MatrixGraph::hierholzer() {
+void MatrixGraph::eulerian_trail(int v, std::vector<int> &euler_path) {
+    euler_path.push_back(v);
+    std::vector<int> adj = get_adj_vertices(v);
+
+    if (adj.size() == 0) return;
+    for (auto w : adj) {
+        if ([this, v, w, &euler_path]()->bool {
+            remove_edge(v, w);
+            std::vector<int> adj = get_adj_vertices(w);
+            if (adj.size() == 1) return false;
+            bool ret = is_connected();
+            insert_edge(v, w);
+            return ret;
+        }()) continue;
+        remove_edge(v, w);
+        eulerian_trail(w, euler_path);
+        return;
+    }
+}
+
+void MatrixGraph::hierholzer() {
 
 }
 
@@ -734,6 +778,10 @@ std::vector<int> MatrixGraph::make_vertex_sequence_from_origin(int o) {
     v.erase(v.begin() + o), v.insert(v.begin(), o);
     
     return v;
+}
+
+bool MatrixGraph::is_adjacent(int v, int w) {
+    return adj_matrix[v][w] || (directed ? 0 : adj_matrix[w][v]);
 }
 
 void MatrixGraph::display() {

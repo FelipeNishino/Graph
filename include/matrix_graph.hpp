@@ -123,9 +123,10 @@ class MatrixGraph {
 
     // LISTA 8
     bool is_eulerian(); // EX 1
-    bool has_eulerian_path(); // EX 2
-    bool fleury(); // EX 3
-    bool hierholzer(); // EX 4
+    bool has_eulerian_trail(); // EX 2
+    void fleury(); // EX 3
+    void eulerian_trail(int v, std::vector<int> &eulerian_trail);
+    void hierholzer(); // EX 4
     void short_hamiltonian_path(); // EX 5
     // void DFS_colors();
 
