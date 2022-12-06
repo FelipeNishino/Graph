@@ -161,6 +161,18 @@ class MatrixGraph {
     std::vector<int> make_vertex_sequence();
     std::vector<int> make_vertex_sequence_from_origin(int o);
     std::vector<int> get_adj_vertices(int v);
+    
+    // LISTA 10
+    void djikstra(int o, std::vector<std::vector<int>> p);
+    void djikstra_vertix(int o, std::vector<int> p);
+    void djikstra_heap(int o, std::vector<std::vector<int>> p);
+
+    // LISTA 11
+    void relax(int u, int v, std::vector<float> &d, std::vector<int> &pi, std::vector<std::vector<int>> p);
+    bool bellman_ford(int o, std::vector<std::vector<int>> p);
+
+    // LISTA 12
+    void floyd_warshall(int o, std::vector<std::vector<int>> p);
   private:
     /*
     A função de dfs foi implementada de maneira genérica para que possa ser

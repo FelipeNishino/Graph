@@ -10,6 +10,7 @@
 #include <tuple>
 #include <algorithm>
 #include <numeric>
+#include <limits>
 #include "list_graph.hpp"
 #include "matrix_graph.hpp"
 #include "logger.hpp"
@@ -705,6 +706,178 @@ void MatrixGraph::BFS_color(int o) {
 	};
 
     BFS(bfsl, o);
+}
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// Lista 10
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+void MatrixGraph::djikstra(int o, std::vector<std::vector<int>> p) {
+    // std::vector<std::vector<float>> d(v_count, std::vector<float>(v_count, std::numeric_limits<float>::infinity()));
+    std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
+    std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
+    d[o] = 0;
+    std::vector<int> s;
+    int n = v_count;
+    while (n > 0) {
+        int u = [this, s, d]()->int{
+            float menor = std::numeric_limits<float>::infinity();
+            int min = 0;
+            for (auto u : make_vertex_sequence()) {
+                if (find(s.begin(), s.end(), u) == s.end() && d[u] < menor) {
+                    menor = d[u];
+                    min = u;
+                }
+            }
+            return min;
+        }();
+        s.push_back(u);
+        for (auto v : get_adj_vertices(u)) {
+            if (d[v] > d[u] + p[u][v]) {
+                d[v] = d[u] + p[u][v];
+                pi[v] = u;
+            }
+        }
+        n--;
+    }
+    std::cout << "Menor caminho: ";
+    for (auto v : s) {
+        std::cout << " -> " << v;
+    }
+    std::cout << '\n';
+}
+
+void MatrixGraph::djikstra_vertix(int o, std::vector<int> p) {
+    // std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
+    // std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
+    // d[o] = 0;
+    // std::vector<int> s;
+    // int n = v_count;
+    // while (n > 0) {
+    //     int u = [this, s, d]()->int{
+    //         float menor = std::numeric_limits<float>::infinity();
+    //         int min = 0;
+    //         for (auto u : make_vertex_sequence()) {
+    //             if (find(s.begin(), s.end(), u) == s.end() && d[u] < menor) {
+    //                 menor = d[u];
+    //                 min = u;
+    //             }
+    //         }
+    //         return min;
+    //     }();
+    //     s.push_back(u);
+    //     for (auto v : get_adj_vertices(u)) {
+    //         if (d[v] > d[u] + p[u][v]) {
+    //             d[v] = d[u] + p[u][v];
+    //             pi[v] = u;
+    //         }
+    //     }
+    //     n--;
+    // }
+    // std::cout << "Menor caminho: ";
+    // for (auto v : s) {
+    //     std::cout << " -> " << v;
+    // }
+    // std::cout << '\n';
+}
+
+void MatrixGraph::djikstra_heap(int o, std::vector<std::vector<int>> p) {
+    std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
+    std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
+    d[o] = 0;
+    std::vector<int> s;
+
+    int n = v_count;
+    while (n > 0) {
+        int u = [this, s, d]()->int{
+            float menor = std::numeric_limits<float>::infinity();
+            int min = 0;
+            for (auto u : make_vertex_sequence()) {
+                if (find(s.begin(), s.end(), u) == s.end() && d[u] < menor) {
+                    menor = d[u];
+                    min = u;
+                }
+            }
+            return min;
+        }();
+        s.push_back(u);
+        for (auto v : get_adj_vertices(u)) {
+            if (d[v] > d[u] + p[u][v]) {
+                d[v] = d[u] + p[u][v];
+                pi[v] = u;
+            }
+        }
+        n--;
+    }
+    std::cout << "Menor caminho: ";
+    for (auto v : s) {
+        std::cout << " -> " << v;
+    }
+    std::cout << '\n';
+}
+
+void MatrixGraph::relax(int u, int v, std::vector<float> &d, std::vector<int> &pi, std::vector<std::vector<int>> p) {
+    if (d[v] > d[u] + p[u][v]) {
+        d[v] = d[u] + p[u][v];
+        pi[v] = u;
+    }
+}
+
+bool MatrixGraph::bellman_ford(int o, std::vector<std::vector<int>> p) {
+    std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
+    std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
+    d[o] = 0;
+
+    for (int i = 1; i < v_count - 1; i++) {
+        for (auto u : make_vertex_sequence()) {
+            for (auto v : get_adj_vertices(u)) {
+                relax(u, v, d, pi, p);
+            }
+        }
+    }
+    for (auto u : make_vertex_sequence()) {
+        for (auto v : get_adj_vertices(u)) {
+            if (d[v] > d[u] + p[u][v]) {
+            return false;
+            }
+        }
+    }
+    return true;
+}
+
+void MatrixGraph::floyd_warshall(int o, std::vector<std::vector<int>> p) {
+    std::vector<std::vector<int>> d = adj_matrix;
+
+    std::vector<int> vertices = make_vertex_sequence();
+    for (auto i : vertices) {
+        for (auto j : vertices) {
+            for (auto k : vertices) {
+                if (d[i][k] + d[k][j] < d[i][j])
+                    d[i][j] = d[i][k] + d[k][j];
+            }
+        }
+    }
+
+    for (auto i : vertices) {
+        for (auto j : vertices) {
+            if(d[i][j] == INF)
+                print("INF", end=" ");
+                std::cout << "INF ";
+            else
+                std::cout << d[i][j] << " ";
+                print(, end="  ");
+        }
+    }
+
+    std::cout << "Matriz floyd-warshall:\n";
+    for
+    for i in range(g.v):
+        for j in range(g.v):
+            if(distance[i][j] == INF):
+                print("INF", end=" ")
+            else:
+                print(distance[i][j], end="  ")
+        print(" ")
+
 }
 
 void MatrixGraph::DFS(DFSLambdas &dfsl, int origin, int depth){	

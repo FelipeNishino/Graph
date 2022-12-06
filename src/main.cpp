@@ -668,6 +668,70 @@ void test_bfs() {
     // std::cout << "O grafo g2" << (!g2.is_eulerian() ? " não " : " ") << "é euleriano.\n";
 }
 
+void test_djikstra() {
+    MatrixGraph g1(5);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(0, 2);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(1, 3);
+    g1.insert_edge(2, 1);
+    g1.insert_edge(2, 3);
+    g1.insert_edge(2, 4);
+    g1.insert_edge(3, 4);
+    g1.insert_edge(4, 3);
+    g1.djikstra(0, {
+        {0,10, 3, 0, 0},
+        {0 ,0, 1, 2, 0},
+        {0, 4, 0, 8, 2},
+        {0, 0, 0, 0, 7},
+        {0, 0, 0, 9, 0}
+        });
+    // Ex 1
+    MatrixGraph g2(8);
+    g2.insert_edge(0, 7);
+    g2.insert_edge(0, 1);
+    g2.insert_edge(1, 2);
+    g2.insert_edge(2, 3);
+    g2.insert_edge(3, 4);
+    g2.insert_edge(4, 5);
+    g2.insert_edge(5, 6);
+    g2.insert_edge(6, 7);
+    g2.djikstra(0, {
+        {0, 1, 0, 0, 0, 0, 0, 9},
+        {0, 0, 1, 0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0, 0, 0, 0},
+        });
+}
+
+void test_bellman_ford() {
+    MatrixGraph g1(5);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(0, 3);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(1, 3);
+    g1.insert_edge(1, 4);
+    g1.insert_edge(2, 1);
+    g1.insert_edge(3, 2);
+    g1.insert_edge(3, 4);
+    g1.insert_edge(4, 0);
+    g1.insert_edge(4, 2);
+    std::vector<std::vector<int>> p = {
+        {0, 6, 0, 7, 0},
+        {0, 0, 5, 8,-4},
+        {0,-2, 0, 0, 0},
+        {0, 0,-3, 0, 9},
+        {2, 0, 7, 0, 0}
+        };
+    
+    std::cout << "O grafo g1" << (!g1.bellman_ford(0, p) ? " não " : " ") << "possui um ciclo negativo.\n";
+
+}
+
 int main(int argc, char* argv[]) {
     Logger::set_output_level(Logger::LOG_ERROR);
 
@@ -701,6 +765,10 @@ int main(int argc, char* argv[]) {
     // LISTA 8
     // test_eulerian();
     // LISTA 9
-    test_bfs();
+    // test_bfs();
+    // LISTA 10
+    // test_djikstra();
+    // LISTA 11
+    test_bellman_ford();
     return 0;
 }

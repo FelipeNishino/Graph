@@ -283,8 +283,8 @@ utilizando cores
 
 - Implemente o Algoritmo de Floyd-Warshall
 
-## Lista 13
+<!-- ## Lista 13
 
 - Implemente o Algoritmo de Prim
 
-- Implemente o Algoritmo de Kruskal
+- Implemente o Algoritmo de Kruskal -->
