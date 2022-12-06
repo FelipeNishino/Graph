@@ -184,10 +184,13 @@ caso seja bipartido, apresente quais são os vértices que da cor azul e quais v
 
 ## Lista 7
 
-1. Escreva um programa que mostre todas as pontes do grafo
-usando a abordagem ingênua.
+<!-- 1. Escreva um programa que mostre todas as pontes do grafo
+usando a abordagem ingênua. -->
 
-2. Mostre a numeração pre-ordem e o valor low para cada vértice dos grafos abaixo:
+1. Escreva um programa que mostre todas as pontes do grafo
+usando o algorítmo de detecção de pontes.
+
+2. Mostre as pontes dos grafos abaixo:
     ```
     G′ = {(a, b), (a, c), (b, c), (c, d), (c, e), (e, f), (e, h), (f, g), (g, h)}
     ```
@@ -198,20 +201,17 @@ usando a abordagem ingênua.
     G′ = {(a, b), (a, d), (b, c), (b, h), (c, d), (c, e), (e, f), (f, g), (g, h)}
     ```
 
-3. Escreva um programa que mostre todas as pontes do grafo
-usando o algorítmo de detecção de pontes.
+<!-- 4. Escreva um programa que mostre todos os pontos de articulação do grafo usando a abordagem ingênua. -->
 
-4. Escreva um programa que mostre todos os pontos de articulação do grafo usando a abordagem ingênua.
+3. Escreva um programa que mostre todos os pontos de articulação do grafo usando o algorítmo de detecção de articulações.
 
-5. Mostre a numeração pre-ordem e o valor low para cada vértice dos grafos abaixo:
+4. Mostre os pontos de articulação dos grafos abaixo:
     ```
     G′ = {(a, b), (a, c), (b, c), (c, d), (c, e), (e, f), (e, g), (e, h), (f, g), (g, h)}
     ```
     ```
     G′ = {(a, b), (a, d), (a, g), (b, c), (b, e), (b, f), (c, d), (e, f), (e, h)}
     ```
-
-6. Escreva um programa que mostre todos os pontos de articulação do grafo usando o algorítmo de detecção de articulações.
 
 ## Lista 8
 
