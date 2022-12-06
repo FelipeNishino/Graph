@@ -19,8 +19,8 @@ class MatrixGraph;
 
 class ListGraph {
 public:
-  int n; // vertex count
-  int m; // edge count
+  int v_count; // vertex count
+  int e_count; // edge count
   std::list<std::list<int>> adj_list;
 
   ListGraph(int v);

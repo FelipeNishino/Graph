@@ -114,16 +114,6 @@ void test_conversion() {
     mg2.display();
 }
 
-void test_cicle() {
-    MatrixGraph mg(4);
-    mg.insert_edge(0, 1);
-    mg.insert_edge(1, 2);
-    mg.insert_edge(2, 3);
-    mg.insert_edge(3, 1);
-    mg.display();
-    std::cout << "O grafo " << (mg.has_cicle() ? " tem ciclo" : " não tem ciclo") << std::endl;
-}
-
 void test_symmetry() {
     //   Exemplo: o grafo G = (V, E), com V = {1, 2, 3} e arestas E =
     // {(1, 2), (2, 1), (1, 3), (3, 1), (2, 3), (3, 2), } é um dígrafo simétrico.
@@ -159,73 +149,462 @@ void test_path() {
 
 void test_has_path() {
     MatrixGraph mg = MatrixGraph::get_example_graph();
-    int i = 0;
+    // int i = 0;
     std::cout << (mg.has_path(0, 5)? "Existe " : "Não existe ") << "um caminho entre 0 e 5\n";
 	std::cout << (mg.has_path(0, 3)? "Existe " : "Não existe ") << "um caminho entre 0 e 3\n";
 	std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-    std::cout << (mg.has_path(1, 2)? "Existe " : "Não existe ") << "um caminho entre 1 e 2\n";
-
-    while (i < 1000000) {
-        i++;
-        std::cout << i << std::endl;
-    }
 }
 
 void test_show_path() {
     MatrixGraph mg = MatrixGraph::get_example_graph();
-    int i = 0;
+    mg.display();
     mg.show_path(0, 5);
-    while (i < 1000000) {
-        i++;
-        std::cout << i << std::endl;
-    }
 	mg.show_path(0, 3);
 	mg.show_path(1, 2);
+    mg.show_path(4, 1);
+    mg.show_path(4, 3);
 }
 
+void test_iterative_DFS() {
+    MatrixGraph mg = MatrixGraph::get_example_graph();
+    mg.iterative_dfs();
+}
+
+void test_arborescence() {
+    MatrixGraph mg = MatrixGraph::get_example_graph();
+    mg.DFS_arborescence();
+}
+
+void arch_type_to_str(int v, int w, Arborescence::ArchCategory cat) {
+    std::cout << "O arco " << v << "-" << w << " é um Arco ";
+    switch (cat) {
+        case Arborescence::arborescence:
+            std::cout << "de Arborescência";
+            break;
+        case Arborescence::descendant:
+            std::cout << "Descendente";
+            break;
+        case Arborescence::ret:
+            std::cout << "de Retorno";
+            break;
+        case Arborescence::cross:
+            std::cout << "Cruzado";
+            break;
+        case Arborescence::none:
             break;
     }
+    std::cout << '\n';
 }
 
+void test_has_arch() {
+    MatrixGraph mg = MatrixGraph(8);
+    mg.insert_edge(0, 5);
+    mg.insert_edge(0, 7);
+    mg.insert_edge(1, 5);
+    mg.insert_edge(2, 1);
+    mg.insert_edge(3, 4);
+    mg.insert_edge(3, 6);
+    mg.insert_edge(4, 0);
+    mg.insert_edge(4, 7);
+    mg.insert_edge(5, 2);
+    mg.insert_edge(5, 7);
+    mg.insert_edge(6, 3);
+    mg.insert_edge(6, 4);
+    mg.insert_edge(7, 1);
+
+    Logger::log(Logger::LOG_INFO, "Testes da função de arborescência com o grafo do slide 72 da aula 2");
+
+    mg.display();
+
+    arch_type_to_str(0, 5, mg.has_arch(0, 5));
+    arch_type_to_str(0, 7, mg.has_arch(0, 7));
+    arch_type_to_str(1, 5, mg.has_arch(1, 5));
+    arch_type_to_str(2, 1, mg.has_arch(2, 1));
+    arch_type_to_str(3, 4, mg.has_arch(3, 4));
+    arch_type_to_str(3, 6, mg.has_arch(3, 6));
+    arch_type_to_str(4, 0, mg.has_arch(4, 0));
+    arch_type_to_str(4, 7, mg.has_arch(4, 7));
+    arch_type_to_str(5, 2, mg.has_arch(5, 2));
+    arch_type_to_str(5, 7, mg.has_arch(5, 7));
+    arch_type_to_str(6, 3, mg.has_arch(6, 3));
+    arch_type_to_str(6, 4, mg.has_arch(6, 4));
+    arch_type_to_str(7, 1, mg.has_arch(7, 1));
+}
+
+void test_cicle() {
+    MatrixGraph mg(4);
+    mg.insert_edge(0, 1);
+    mg.insert_edge(1, 2);
+    mg.insert_edge(2, 3);
+    mg.insert_edge(3, 1);
+    mg.display();
+    std::cout << "O grafo " << (mg.has_cicle_with_path() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cicle_with_stack() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cicle_with_arborescence() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cicle_with_colors() ? "tem ciclo" : "não tem ciclo") << std::endl;
+}
+
+void test_topologic_sort() {
+    MatrixGraph mg = MatrixGraph::get_example_graph();
+    std::list<int> l = mg.topologic_sort();
+    std::cout << "Vertices do topologic sort: ";
+    for (auto x : l) {
+        std::cout << x << " ";
+    }
+    std::cout << '\n';
+}
+
+void test_subgraph() {
+    MatrixGraph mg = MatrixGraph::get_example_graph(false);
+    MatrixGraph* mgsub = mg.induced_subgraph({0, 2, 3, 5});
+    std::cout << "Grafo base:\n";
+    mg.display();
+    if (mgsub != nullptr) {
+        std::cout << "Subgrafo induzido por {0, 2, 3, 5}:\n";
+        mgsub->display();
+    }
+    else {
+        std::cout << "O Grafo passado não é um subgrafo de mg\n";
     }
 
+    mgsub = mg.induced_subgraph({5, 1});
+    if (mgsub != nullptr) {
+        std::cout << "Subgrafo induzido por {5, 1}:\n";
+        mgsub->display();
     }
+    else {
+        std::cout << "O Grafo passado não é um subgrafo de mg\n";
     }
+    // mg = MatrixGraph(6);
+
+    MatrixGraph g1 = MatrixGraph(6, false);
+    g1.insert_edge(2, 1);
+    g1.insert_edge(2, 4);
+    g1.insert_edge(4, 1);
+    g1.insert_edge(4, 5);
+    g1.insert_edge(5, 1);
+    if (!mg.is_subgraph(g1)) {
+        std::cout << "O grafo g1 não é um subgrafo de mg\n";
+    } else {
+        std::cout << "O grafo g1 é um subgrafo de mg\n";
+    }
+
+    MatrixGraph g2 = MatrixGraph(6, false);
+    g2.insert_edge(2, 1);
+    g2.insert_edge(2, 4);
+    g2.insert_edge(4, 5);
+    g2.insert_edge(5, 1);
+    if (!mg.is_subgraph(g2)) {
+        std::cout << "O grafo g2 não é um subgrafo de mg\n";
+    } else {
+        std::cout << "O grafo g2 é um subgrafo de mg\n";
+    }
+
+    MatrixGraph g3 = MatrixGraph(5, false);
+    g3.insert_edge(0, 1);
+    g3.insert_edge(1, 2);
+    g3.insert_edge(2, 3);
+    g3.insert_edge(3, 4);
+    g3.insert_edge(4, 2);
+
+    std::cout << "g3: \n";
+    g3.display();
+
+    MatrixGraph g4 = MatrixGraph(5, false);
+    g4.insert_edge(0, 1);
+    g4.insert_edge(1, 2);
+    g4.insert_edge(2, 3);
+    std::cout << "g4: \n";
+    g4.display();
+    if (!g3.is_subgraph(g4)) {
+        std::cout << "O grafo g4 não é um subgrafo de g3\n";
+    } else {
+        std::cout << "O grafo g4 é um subgrafo de g3\n";
+    }
+    if (!g3.is_spanning_subgraph(g4)) {
+        std::cout << "O grafo g4 não é um subgrafo gerador de g3\n";
+    } else {
+        std::cout << "O grafo g4 é um subgrafo gerador de g3\n";
+    }
+
+    MatrixGraph g5 = MatrixGraph(5, false);
+    g5.insert_edge(0, 1);
+    g5.insert_edge(1, 2);
+    g5.insert_edge(2, 3);
+    g5.insert_edge(3, 4);
+    std::cout << "g5: \n";
+    g5.display();
+    if (!g3.is_subgraph(g5)) {
+        std::cout << "O grafo g5 não é um subgrafo de g3\n";
+    } else {
+        std::cout << "O grafo g5 é um subgrafo de g3\n";
+    }
+    if (!g3.is_spanning_subgraph(g5)) {
+        std::cout << "O grafo g5 não é um subgrafo gerador de g3\n";
+    } else {
+        std::cout << "O grafo g5 é um subgrafo gerador de mg\n";
     }
 }
 
-int main(int argc, char* argv[]) {
-    Logger::set_output_level(Logger::LOG_ERROR);
+void test_components() {
+    MatrixGraph g1 = MatrixGraph(5, false);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(2, 0);
+    g1.insert_edge(3, 4);
+    // g1.insert_edge(5, 6);
+    // g1.insert_edge(6, 7);
+    // g1.insert_edge(7, 5);
+    std::cout << "g1:\n";
+    g1.display();
+    std::cout << "Qtd de componentes em g1: " << g1.get_components() << '\n';
+    std::cout << "O grafo g1" << (!g1.is_connected() ? " não " : " ") << "é conexo.\n";
 
-    //   return a > b;
-    // };
+    MatrixGraph g2 = MatrixGraph(4, false);
+    g2.insert_edge(0, 1);
+    g2.insert_edge(0, 2);
+    g2.insert_edge(1, 2);
+    g2.insert_edge(1, 3);
+    g2.insert_edge(2, 3);
+    g2.insert_edge(3, 0);
+    std::cout << "g2:\n";
+    g2.display();
+    std::cout << "Qtd de componentes em g2: " << g2.get_components() << '\n';
+    std::cout << "O grafo g2" << (!g2.is_connected() ? " não " : " ") << "é conexo.\n";
+};
 
-    // auto fn102 = std::bind(fn,10,2);
-    // auto fnnorm = std::bind(fn,_1,_2);
-    // auto fninv = std::bind(fn,_2,_1);
-    // auto fnjust2 = std::bind(fn,_2,_2);
-    // auto fnover = std::bind(fn,_2,_3);
+void test_bipartition() {
+    MatrixGraph g1 = MatrixGraph(5, false);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(2, 3);
+    g1.insert_edge(3, 4);
+
+    std::string output;
+    std::cout << "g1:\n";
+    g1.display();
+    output += "O grafo g1" ;
+    output += (!g1.is_bipartite() ? " não " : " ");
+    output += "é bipartido.\n";
+    std::cout << output;
+    
+    MatrixGraph g2 = MatrixGraph(8, false);
+    g2.insert_edge(0, 1);
+    g2.insert_edge(0, 3);
+    g2.insert_edge(0, 4);
+    g2.insert_edge(1, 2);
+    g2.insert_edge(1, 5);
+    g2.insert_edge(2, 3);
+    g2.insert_edge(2, 6);
+    g2.insert_edge(3, 7);
+    g2.insert_edge(4, 5);
+    g2.insert_edge(5, 6);
+    g2.insert_edge(6, 7);
+    g2.insert_edge(7, 4);
+
+    output = "";
+    std::cout << "g2:\n";
+    g2.display();
+    output += "O grafo g2" ;
+    output += (!g2.is_bipartite() ? " não " : " ");
+    output += "é bipartido.\n";
+    std::cout << output;
+
+    MatrixGraph g3 = MatrixGraph(4, false);
+    g3.insert_edge(0, 1);
+    g3.insert_edge(0, 2);
+    g3.insert_edge(0, 3);
+    g3.insert_edge(1, 2);
+    g3.insert_edge(2, 3);
+
+    output = "";
+    std::cout << "g3:\n";
+    g3.display();
+    output += "O grafo g3" ;
+    output += (!g3.is_bipartite() ? " não " : " ");
+    output += "é bipartido.\n";
+    std::cout << output;
+
+    MatrixGraph g4 = MatrixGraph(5, false);
+    g4.insert_edge(0, 1);
+    g4.insert_edge(0, 2);
+    g4.insert_edge(1, 2);
+    g4.insert_edge(2, 3);
+    g4.insert_edge(3, 4);
+    g4.insert_edge(4, 1);
+
+    output = "";
+    std::cout << "g4:\n";
+    g4.display();
+    output += "O grafo g4" ;
+    output += (!g4.is_bipartite() ? " não " : " ");
+    output += "é bipartido.\n";
+    std::cout << output;
+
+    MatrixGraph g5 = MatrixGraph(6, false);
+    g5.insert_edge(0, 1);
+    g5.insert_edge(0, 2);
+    g5.insert_edge(0, 3);
+    g5.insert_edge(1, 3);
+    g5.insert_edge(1, 4);
+    g5.insert_edge(2, 3);
+    g5.insert_edge(2, 5);
+    g5.insert_edge(3, 4);
+    g5.insert_edge(3, 5);
+    g5.insert_edge(4, 5);
+
+    output = "";
+    std::cout << "g5:\n";
+    g5.display();
+    output += "O grafo g5" ;
+    output += (!g5.is_bipartite() ? " não " : " ");
+    output += "é bipartido.\n";
+    std::cout << output;
+}
+
+void test_bridge_detection() {
+    // G′ = {(0, 1), (0, 2), (1, 2), (2, 3), (2, 4), (4, 5), (4, 7), (5, 6), (6, 7)}
+    MatrixGraph g1 = MatrixGraph(8, false);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(2, 0);
+    g1.insert_edge(1, 3);
+    g1.insert_edge(3, 4);
+    g1.insert_edge(4, 5);
+    g1.insert_edge(5, 3);
+    
+    MatrixGraph g2 = MatrixGraph(8, false);
+    g2.insert_edge(0, 1);
+    g2.insert_edge(0, 2);
+    g2.insert_edge(1, 2);
+    g2.insert_edge(2, 3);
+    g2.insert_edge(2, 4);
+    g2.insert_edge(4, 5);
+    g2.insert_edge(4, 7);
+    g2.insert_edge(5, 6);
+    g2.insert_edge(6, 7);
+    // G′ = {(0, 1), (1, 2), (2, 3), (2, 4), (4, 5), (5, 6), (6, 7)}
+    MatrixGraph g3 = MatrixGraph(8, false);
+    g3.insert_edge(0, 1);
+    g3.insert_edge(1, 2);
+    g3.insert_edge(2, 3);
+    g3.insert_edge(2, 4);
+    g3.insert_edge(4, 5);
+    g3.insert_edge(5, 6);
+    g3.insert_edge(6, 7);
+    // G′ = {(0, 1), (0, 3), (1, 2), (1, 7), (2, 3), (2, 4), (4, 5), (5, 6), (6, 7)}
+    MatrixGraph g4 = MatrixGraph(8, false);
+    g4.insert_edge(0, 1);
+    g4.insert_edge(0, 3);
+    g4.insert_edge(1, 2);
+    g4.insert_edge(1, 7);
+    g4.insert_edge(2, 3);
+    g4.insert_edge(2, 4);
+    g4.insert_edge(4, 5);
+    g4.insert_edge(5, 6);
+    g4.insert_edge(6, 7);
+
+    std::cout << "g1:\n";
+    g1.display();
+    g1.bridge_detection();
+    std::cout << "g2:\n";
+    g2.display();
+    g2.bridge_detection();
+    std::cout << "g3:\n";
+    g3.display();
+    g3.bridge_detection();
+    std::cout << "g4:\n";
+    g4.display();
+    g4.bridge_detection();
+}
+
+void test_articulation_detection() {
+    // G′ = {(0, 1), (0, 2), (1, 2), (2, 3), (2, 4), (4, 5), (4, 6), (4, 7), (5, 6), (6, 7)}
+    // G′ = {(0, 1), (0, 3), (0, 6), (1, 2), (1, 4), (1, 5), (2, 3), (4, 5), (4, 7)}
+
+    MatrixGraph g1 = MatrixGraph(6, false);
+    g1.insert_edge(0, 1);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(2, 0);
+    g1.insert_edge(1, 3);
+    g1.insert_edge(3, 4);
+    g1.insert_edge(4, 5);
+    g1.insert_edge(5, 3);
+    std::cout << "g1:\n";
+    g1.display();
+    g1.articulation_detection();
+    
+    MatrixGraph g2 = MatrixGraph(6, false);
+    g2.insert_edge(0, 1);
+    g2.insert_edge(1, 2);
+    g2.insert_edge(2, 0);
+    g2.insert_edge(0, 3);
+    g2.insert_edge(3, 4);
+    g2.insert_edge(4, 5);
+    g2.insert_edge(5, 3);
+    std::cout << "g2:\n";
+    g2.display();
+    g2.articulation_detection();
+
+    MatrixGraph g3 = MatrixGraph(8, false);
+    g3.insert_edge(0, 1);
+    g3.insert_edge(0, 2);
+    g3.insert_edge(1, 2);
+    g3.insert_edge(2, 3);
+    g3.insert_edge(2, 4);
+    g3.insert_edge(4, 5);
+    g3.insert_edge(4, 6);
+    g3.insert_edge(4, 7);
+    g3.insert_edge(5, 6);
+    g3.insert_edge(6, 7);
+    std::cout << "g3:\n";
+    g3.display();
+    g3.articulation_detection();
+
+    MatrixGraph g4 = MatrixGraph(8, false);
+    g4.insert_edge(0, 1);
+    g4.insert_edge(0, 3);
+    g4.insert_edge(0, 6);
+    g4.insert_edge(1, 2);
+    g4.insert_edge(1, 4);
+    g4.insert_edge(1, 5);
+    g4.insert_edge(2, 3);
+    g4.insert_edge(4, 5);
     g4.insert_edge(4, 7);
     std::cout << "g4:\n";
     g4.display();
+    g4.articulation_detection();
+}
+
 int main(int argc, char* argv[]) {
     Logger::set_output_level(Logger::LOG_ERROR);
 
     get_options(argc, argv);
 
+    // LISTA 1
     // test_source_sink();
+    // test_conversion();
     // test_symmetry();
+    // LISTA 2
     // test_path();
+    // test_has_path();
+    // Logger::log(Logger::LOG_INFO, "Testes de tem caminho realizados com sucesso.");
+	// test_show_path();
+    // Logger::log(Logger::LOG_INFO, "Testes de mostra caminho realizados com sucesso.");
+    // test_iterative_DFS();
+    // test_arborescence();
+    // test_has_arch();
+    // LISTA 3
+    // test_cicle();
+    // LISTA 4
+    // test_topologic_sort();
+    // LISTA 5
+    // test_subgraph();
+    // test_components();
+    // LISTA 6
+    // test_bipartition();
+    // LISTA 7
+    // test_bridge_detection();
+    test_articulation_detection();
+    return 0;
 }

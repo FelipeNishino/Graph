@@ -3,28 +3,70 @@
 
 #include <functional>
 #include <list>
+#include <numeric>
 #include <string>
 #include <vector>
+#include <set>
 
 class ListGraph;
+
+class Arborescence {
+    public:
+    
+    enum ArchCategory {
+        arborescence,
+        descendant,
+        ret,
+        cross,
+        none
+    };
+    
+    std::vector<int> t_entry;
+    std::vector<int> t_exit;
+    std::vector<int> parent;
+    Arborescence(int v_count) : t_entry(v_count, -1), t_exit(v_count, -1), parent(v_count, -1){};
+};
+
+// typedef enum {
+//     arborescence,
+//     advance,
+//     ret,
+//     cross
+// } ArchCategory;
 
 class MatrixGraph {
   public:
     struct DFSLambdas {
-        std::function<void(int, int, int)> on_end;
-        std::function<void(int, int, int)> on_step;
-        std::function<void(int, int, int)> on_return;
-        DFSLambdas() : on_end(fnull), on_step(fnull), on_return(fnull){};
+        std::function<void(int, int, int, int)> on_end;
+        std::function<void(int, int, int, int)> on_step;
+        std::function<void(int, int, int, int)> on_skip;
+        std::function<void(int, bool)> on_return_to_root;
+        std::function<void(int, int, int, int)> on_return;
+        std::function<void(int, int, int, int)> after_visit;
+        std::function<bool(int, int, int, int)> entry_condition;
+        DFSLambdas() : on_end(fnulla), on_step(fnulla), on_skip(fnulla), on_return_to_root(fnullb), on_return(fnulla), after_visit(fnulla){};
     };
-    int n; // vertex count
-    int m; // edge count
+    // struct ColorLambdas {
+    //     std::function<void(std::vector<int>&, int, int, int)> on_entry;
+    //     std::function<void(std::vector<int>&, int, int, int)> on_color_check;
+    //     std::function<void(std::vector<int>&, int, int, int)> on_end;
+    //     std::function<void(std::vector<int>&, int, int, int)> on_return;
+    //     ColorLambdas() : on_entry(), on_color_check(), on_end(), on_return(){};
+    // };
+    int v_count; // vertex count
+    int e_count; // edge count
+    std::vector<int> edges_per_vertex; // edge count
+    bool directed;
     std::vector<std::vector<int>> adj_matrix;
-    static const inline std::function<void(int, int, int)> fnull = [](int a, int b, int d) {};
-    MatrixGraph(int v);
-    MatrixGraph(ListGraph g);
-    MatrixGraph(std::string filename);
-    static MatrixGraph get_example_graph() {
-        MatrixGraph mg(6);
+    static const inline std::function<void(int, int, int, int)> fnulla = [](int a, int b, int c, int d) {};
+    static const inline std::function<void(int, bool)> fnullb = [](int a, bool b) {};
+    
+    // LISTA 1
+    MatrixGraph(int _n, bool _directed = true);
+    MatrixGraph(ListGraph g); // EX 5
+    MatrixGraph(std::string filename); // EX 7
+    static MatrixGraph get_example_graph(bool directed = true) {
+        MatrixGraph mg(6, directed);
         mg.insert_edge(0, 2);
         mg.insert_edge(0, 3);
         mg.insert_edge(0, 4);
@@ -39,29 +81,68 @@ class MatrixGraph {
     }
     void insert_edge(int v1, int v2);
     void remove_edge(int v1, int v2);
-    int indegree(int vertex);
-    int outdegree(int vertex);
-    bool is_equal(MatrixGraph g);
-    bool vertex_is_source(int v);
-    bool vertex_is_sink(int v);
-    bool is_symmetrical();
-    bool is_path(std::vector<int> seq);
-    bool is_simple_path(std::vector<int> seq);
-    bool has_path(int v0, int v1);
-    void show_path(int v0, int v1);
-    bool travel_to(int o, int t);
-    // const std::function<void()/*type of your lamdba::operator()*/>&
+    int indegree(int vertex); // EX 3
+    int outdegree(int vertex); // EX 3
+    bool operator==(MatrixGraph &other); // EX 4
+    bool vertex_is_source(int v); // EX 8
+    bool vertex_is_sink(int v); // EX 9
+    bool is_symmetrical(); // EX 10
 
-    bool has_cicle();
-    void topologic_sort();
-    // std::list<int> find_equivalent_vertices(MatrixGraph g, int v);
-    MatrixGraph induced_subgraph(MatrixGraph g);
-    MatrixGraph edge_induced_subgraph(MatrixGraph g);
+    // LISTA 2
+    bool is_path(std::vector<int> seq); // EX 1
+    bool is_simple_path(std::vector<int> seq); // EX 2
+    bool has_path(int v0, int v1); // EX 3
+    void show_path(int v0, int v1); // EX 4
+    // FUNCAO DE DFS DECLARADA NO ESCOPO PRIVATE
+    void iterative_dfs(); // EX 5
+    Arborescence DFS_arborescence();
+    Arborescence::ArchCategory has_arch(int v, int w); // EX 6
+
+    // LISTA 3
+    bool has_cicle_with_path(); // EX 1
+    bool has_cicle_with_stack(); // EX 2
+    bool has_cicle_with_arborescence(); // EX 3
+    bool has_cicle_with_colors(); // EX 4
+
+    // LISTA 4
+    std::list<int> topologic_sort();  // EX 1
+
+    // LISTA 5
+    MatrixGraph *induced_subgraph(std::set<int> vertices); // EX 1, 4
+    MatrixGraph *edge_induced_subgraph(MatrixGraph g); // EX 1
+    bool is_subgraph(MatrixGraph g); // EX 2
+    bool is_spanning_subgraph(MatrixGraph g); // EX 3
+    int get_components(); // EX 5
+    bool is_connected(); // EX 6
+    std::list<std::set<int>> kosaraju(); // EX 7
+
+    // LISTA 6
+    bool is_bipartite(); // EX 1, 2
+
+    // LISTA 7
+    void bridge_detection(); // EX 1, 2
+    void articulation_detection(); // EX 3, 4
+
+    // LISTA 8
+    bool is_eulerian(); // EX 1
+    bool has_eulerian_path(); // EX 2
+    bool fleury(); // EX 3
+    bool hierholzer(); // EX 4
+    void short_hamiltonian_path(); // EX 5
+    // void DFS_colors();
+
     void display();
-
+    void display_visitados(std::vector<bool> &visitado);
+    std::vector<int> make_vertex_sequence();
+    std::vector<int> make_vertex_sequence_from_origin(int o);
+    std::vector<int> get_adj_vertices(int v);
   private:
-    void DFS(DFSLambdas dfsl, int origin = 0, int depth = 0, std::vector<bool> visitado = {});
-    void visit(DFSLambdas dfsl, int origin, int depth, std::vector<bool> &visitado, int v);
+    void DFS(DFSLambdas &dfsl, int origin = 0, int depth = 0);
+    void visit(DFSLambdas &dfsl, int origin, int depth, int v0, int v);
+    void DFS_visita();
+    bool DFS_colors();
+    bool is_adjacent(int v, int w);
+    bool visit_colors(std::vector<int> &colors, int v);
 };
 
 #endif // GRAPH_MATRIXGRAPH_H

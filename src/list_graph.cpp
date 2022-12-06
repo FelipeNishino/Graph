@@ -10,22 +10,22 @@ using namespace std;
 #include "list_graph.hpp"
 
 ListGraph::ListGraph(int v) {
-	n = v;
-	m = 0;
-	list<int> inner_list(n);
-	for (int i = 0; i < n; i++)
+	v_count = v;
+	e_count = 0;
+	list<int> inner_list(v_count);
+	for (int i = 0; i < v_count; i++)
 		adj_list.push_back(inner_list);
 }
 
 ListGraph::ListGraph(MatrixGraph g) {
-	n = g.n;
-	m = g.m;
+	v_count = g.v_count;
+	e_count = g.e_count;
 	list<int> inner_list;
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; ++j) {
+	for (int i = 0; i < v_count; i++) {
+		for (int j = 0; j < v_count; ++j) {
 			if (g.adj_matrix[i][j]) {
 				inner_list.push_back(j);
-				m++;
+				e_count++;
 			}
 		}
 		adj_list.push_back(inner_list);
@@ -48,7 +48,7 @@ ListGraph::ListGraph(string filename) {
 	while(getline(file, line)) {
 		switch (step) {
 			case 0:
-				n = stoi(line);
+				v_count = stoi(line);
 				break;
 			case 1: break;
 			default:
@@ -64,7 +64,7 @@ ListGraph::ListGraph(string filename) {
 
 void ListGraph::insert_edge(int v1, int v2) {
 	int j = 1;
-	if (v1 > n || v2 > n)
+	if (v1 > v_count || v2 > v_count)
 		return;
 	for (auto &inner_list : adj_list) {
 		if (j == v1) {
@@ -73,7 +73,7 @@ void ListGraph::insert_edge(int v1, int v2) {
 					return;
 			}
 			inner_list.push_back(v2);
-			m++;
+			e_count++;
 			return;
 		}
 		j++;
@@ -82,7 +82,7 @@ void ListGraph::insert_edge(int v1, int v2) {
 
 void ListGraph::remove_edge(int v1, int v2) {
 	int j = 1;
-	if (v1 > n || v2 > n)
+	if (v1 > v_count || v2 > v_count)
 		return;
 	for (auto &inner_list : adj_list) {
 		if (j == v1) {
@@ -90,7 +90,7 @@ void ListGraph::remove_edge(int v1, int v2) {
 			inner_list.remove_if([v2](int n) { return n == v2; });
 
 			if (prev_size != inner_list.size()) {
-				m--;
+				e_count--;
 				return;
 			}
 		}
@@ -175,5 +175,5 @@ void ListGraph::display() {
 		cout << endl;
 		j++;
 	}
-	cout << "edges: " << m << endl << endl;
+	cout << "edges: " << e_count << endl << endl;
 }
