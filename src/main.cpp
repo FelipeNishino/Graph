@@ -6,9 +6,9 @@
 #include <list>
 #include <vector>
 #include <algorithm>
+#include <getopt.h>
 
-static const std::vector<std::string> MAIN_OPTIONS = {"-d", "--debug"};
-static unsigned int flags{};
+static int flags{};
 
 enum MAIN_FLAGS {
     FLAG_DEBUG = 1,
@@ -17,13 +17,74 @@ enum MAIN_FLAGS {
     FLAG_INVALID = 1 << 3
 };
 
-void help() {
+void usage() {
     std::cout << "Usage: ./graph.out [OPTIONS]\n";
     std::cout << "-d\t--debug\t\tSet log level to debug\n";
     std::cout << "-i\t--info\t\tSet log level to info\n";
     std::cout << "-w\t--warning\t\tSet log level to warnings\n";
     if (flags ^ FLAG_DEBUG || flags ^ FLAG_INFO || flags ^ FLAG_WARNING) {
         std::cout << "\nInvalid flag usage: received only --no-play, won't do anything\n";
+    }
+}
+
+void get_options(int argc, char* const* argv) {
+    int c = 0;
+
+    static const struct option options[] = {
+        {"debug",     no_argument,        &flags, FLAG_DEBUG},
+        {"info",     no_argument,        &flags, FLAG_INFO},
+        {"warning",  no_argument,        &flags, FLAG_WARNING},
+        // {"features",    optional_argument,  &flags, FLAG_INVALID},
+        {"help",        no_argument,        &flags, FLAG_INVALID},
+        {"loglevel",    required_argument,  0, 'l'},
+        
+        {0,             0,                  0,  0 }
+    };
+    
+    int option_index = 0;
+
+    while ((c = getopt_long(argc, argv, "dhil:w", options, &option_index)) != -1) {
+        switch (c) {
+        case 0:
+          /* If this option set a flag, do nothing else now. */
+            if (options[option_index].flag != 0) break;
+            printf("option %s", options[option_index].name);
+            if (optarg) printf(" with arg %s", optarg);
+            printf("\n");
+            break;
+        case 'd':
+            flags |= FLAG_DEBUG;
+            break;
+        case 'h':
+            flags |= FLAG_INVALID;
+            break;
+        case 'i':
+            flags |= FLAG_INFO;
+            break;
+        case 'l':
+            Logger::set_output_level(static_cast<Logger::LogLevel>(atoi(optarg)));
+            break;
+        case 'w':
+            flags |= FLAG_WARNING;
+            break;
+        default:
+            usage();
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    if (flags & FLAG_INVALID) {
+        usage();
+        exit(EXIT_FAILURE);
+    }
+    if (flags & FLAG_DEBUG )  {
+        Logger::set_output_level(Logger::LOG_DEBUG);
+    }
+    if (flags & FLAG_INFO )  {
+        Logger::set_output_level(Logger::LOG_INFO);
+    }
+    if (flags & FLAG_WARNING )  {
+        Logger::set_output_level(Logger::LOG_WARNING);
     }
 }
 
@@ -134,66 +195,20 @@ void test_show_path() {
 	mg.show_path(1, 2);
 }
 
-void process_args(std::vector<std::string> argv_str) {
-    for (auto const &opt : argv_str) {
-        bool valid_opt = [opt]()->bool {
-            auto str = std::find(MAIN_OPTIONS.begin(), MAIN_OPTIONS.end(), opt);
-            return str!=MAIN_OPTIONS.end();
-        }();
-        if (valid_opt) {
-            if (opt.compare("-d") == 0 || opt.compare("--debug") == 0) {
-                flags |= FLAG_DEBUG;
-            }
-            else if (opt.compare("-i") == 0 || opt.compare("--info") == 0) {
-                flags |= FLAG_INFO;
-            }
-            else if (opt.compare("-w") == 0 || opt.compare("--warning") == 0) {
-                flags |= FLAG_WARNING;
-            }
-            else if (opt.compare("-h") == 0 || opt.compare("--help") == 0) {
-                flags |= FLAG_INVALID;
-            }
-        }
-        else {
-            std::cerr << "Unrecognized flag " << opt << '\n';
-            flags |= FLAG_INVALID;
             break;
-        }
     }
 }
 
-void process_flags() {
-    Logger::set_output_level(Logger::LOG_ERROR);
-    if (flags & FLAG_INVALID || !(flags ^ 1 << 2)) {
-        help();
-        exit(EXIT_FAILURE);
     }
 
-    if (flags & FLAG_DEBUG )  {
-        Logger::set_output_level(Logger::LOG_DEBUG);
     }
-    if (flags & FLAG_INFO )  {
-        Logger::set_output_level(Logger::LOG_INFO);
     }
-    if (flags & FLAG_WARNING )  {
-        Logger::set_output_level(Logger::LOG_WARNING);
     }
 }
 
 int main(int argc, char* argv[]) {
-    using std::string;
-    string opt{};
-    std::vector<string> argv_str(argc - 1);
-    std::transform(&argv[1], &argv[argc], argv_str.begin(), [](char* cs){
-        return string{cs};
-    });
-    process_args(argv_str);
-    process_flags();
+    Logger::set_output_level(Logger::LOG_ERROR);
 
-    test_has_path();
-	test_show_path();
-    // using namespace std::placeholders;    // adds visibility of _1, _2, _3,...
-    // auto fn = [](int a, int b)->bool {
     //   return a > b;
     // };
 
@@ -202,12 +217,13 @@ int main(int argc, char* argv[]) {
     // auto fninv = std::bind(fn,_2,_1);
     // auto fnjust2 = std::bind(fn,_2,_2);
     // auto fnover = std::bind(fn,_2,_3);
+    g4.insert_edge(4, 7);
+    std::cout << "g4:\n";
+    g4.display();
+int main(int argc, char* argv[]) {
+    Logger::set_output_level(Logger::LOG_ERROR);
 
-    // std::cout << (fn102()? "true" : "false") << '\n';
-    // std::cout << (fnnorm(1, 2)? "true" : "false") << '\n';
-    // std::cout << (fninv(1, 2)? "true" : "false") << '\n';
-    // std::cout << (fnjust2(1, 2)? "true" : "false") << '\n';
-    // std::cout << (fnover(1, 2, 0)? "true" : "false") << '\n';
+    get_options(argc, argv);
 
     // test_source_sink();
     // test_symmetry();
