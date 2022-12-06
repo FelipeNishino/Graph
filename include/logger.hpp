@@ -16,7 +16,7 @@ class Logger {
             LOG_INFO,
             LOG_DEBUG
         };
-        
+        static LogLevel output_level() { return logger_level; }
         static void set_output_level(enum LogLevel level) { logger_level = level; }
 		static std::string get_label_for_level(enum LogLevel level) {
 			switch (level)
