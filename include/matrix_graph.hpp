@@ -27,17 +27,21 @@ class Arborescence {
     Arborescence(int v_count) : t_entry(v_count, -1), t_exit(v_count, -1), parent(v_count, -1){};
 };
 
-// typedef enum {
-//     arborescence,
-//     advance,
-//     ret,
-//     cross
-// } ArchCategory;
-
 class MatrixGraph {
   public:
+  
+    /*
+    Momentos de execução:
+    on_end: Quando a DFS chega em uma folha
+    on_step: Quando a DFS visita um vértice
+    on_skip: Quando um vértice não passa na condição de visita
+    on_return_to_root: Quando a recursão volta para a raíz
+    on_return: Quando um vértice termina de ser visitado e vai subir na recursão
+    after_visit: Após a chamada recursiva de uma visita, ainda dentro da condição de entrada
+    entry_condition: Função que computa a condição de entrada em um vértice
+    */
     struct DFSLambdas {
-        std::function<void(int, int, int, int)> on_end;
+        std::function<void(int, int, int, int)> on_end; 
         std::function<void(int, int, int, int)> on_step;
         std::function<void(int, int, int, int)> on_skip;
         std::function<void(int, bool)> on_return_to_root;
@@ -46,13 +50,7 @@ class MatrixGraph {
         std::function<bool(int, int, int, int)> entry_condition;
         DFSLambdas() : on_end(fnulla), on_step(fnulla), on_skip(fnulla), on_return_to_root(fnullb), on_return(fnulla), after_visit(fnulla){};
     };
-    // struct ColorLambdas {
-    //     std::function<void(std::vector<int>&, int, int, int)> on_entry;
-    //     std::function<void(std::vector<int>&, int, int, int)> on_color_check;
-    //     std::function<void(std::vector<int>&, int, int, int)> on_end;
-    //     std::function<void(std::vector<int>&, int, int, int)> on_return;
-    //     ColorLambdas() : on_entry(), on_color_check(), on_end(), on_return(){};
-    // };
+
     int v_count; // vertex count
     int e_count; // edge count
     std::vector<int> edges_per_vertex; // edge count
@@ -137,6 +135,13 @@ class MatrixGraph {
     std::vector<int> make_vertex_sequence_from_origin(int o);
     std::vector<int> get_adj_vertices(int v);
   private:
+    /*
+    A função de dfs foi implementada de maneira genérica para que possa ser
+    reaproveitada em diversos exercícios. As particularidades de cada
+    algoritmo são implementadas por meio dasx funções lambda passadas
+    como parametro na struct DFSLambdas. A definição da struct tem comentários
+    que explicam em que momento cada função é executada.
+    */
     void DFS(DFSLambdas &dfsl, int origin = 0, int depth = 0);
     void visit(DFSLambdas &dfsl, int origin, int depth, int v0, int v);
     void DFS_visita();
