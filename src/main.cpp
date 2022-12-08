@@ -6,6 +6,7 @@
 #include <list>
 #include <vector>
 #include <algorithm>
+#include <limits>
 #include <getopt.h>
 
 static int flags{};
@@ -669,7 +670,7 @@ void test_bfs() {
 }
 
 void test_djikstra() {
-    MatrixGraph g1(5);
+    MatrixGraph g1(5, true, MatrixGraph::edge_weight);
     g1.insert_edge(0, 1);
     g1.insert_edge(0, 2);
     g1.insert_edge(1, 2);
@@ -679,15 +680,16 @@ void test_djikstra() {
     g1.insert_edge(2, 4);
     g1.insert_edge(3, 4);
     g1.insert_edge(4, 3);
-    g1.djikstra(0, {
+    g1.weights = {
         {0,10, 3, 0, 0},
         {0 ,0, 1, 2, 0},
         {0, 4, 0, 8, 2},
         {0, 0, 0, 0, 7},
         {0, 0, 0, 9, 0}
-        });
+        };
+    g1.djikstra(0);
     // Ex 1
-    MatrixGraph g2(8);
+    MatrixGraph g2(8, true, MatrixGraph::edge_weight);
     g2.insert_edge(0, 7);
     g2.insert_edge(0, 1);
     g2.insert_edge(1, 2);
@@ -696,7 +698,7 @@ void test_djikstra() {
     g2.insert_edge(4, 5);
     g2.insert_edge(5, 6);
     g2.insert_edge(6, 7);
-    g2.djikstra(0, {
+    g2.weights = {
         {0, 1, 0, 0, 0, 0, 0, 9},
         {0, 0, 1, 0, 0, 0, 0, 0},
         {0, 0, 0, 1, 0, 0, 0, 0},
@@ -705,11 +707,12 @@ void test_djikstra() {
         {0, 0, 0, 0, 0, 0, 1, 0},
         {0, 0, 0, 0, 0, 0, 0, 1},
         {0, 0, 0, 0, 0, 0, 0, 0},
-        });
+        };
+    g2.djikstra(0);
 }
 
 void test_bellman_ford() {
-    MatrixGraph g1(5);
+    MatrixGraph g1(5, true, MatrixGraph::edge_weight);
     g1.insert_edge(0, 1);
     g1.insert_edge(0, 3);
     g1.insert_edge(1, 2);
@@ -720,7 +723,7 @@ void test_bellman_ford() {
     g1.insert_edge(3, 4);
     g1.insert_edge(4, 0);
     g1.insert_edge(4, 2);
-    std::vector<std::vector<int>> p = {
+    g1.weights = {
         {0, 6, 0, 7, 0},
         {0, 0, 5, 8,-4},
         {0,-2, 0, 0, 0},
@@ -728,8 +731,25 @@ void test_bellman_ford() {
         {2, 0, 7, 0, 0}
         };
     
-    std::cout << "O grafo g1" << (!g1.bellman_ford(0, p) ? " não " : " ") << "possui um ciclo negativo.\n";
+    std::cout << "O grafo g1" << (!g1.bellman_ford(0) ? " não " : " ") << "possui um ciclo negativo.\n";
 
+}
+
+void test_floyd_warshall() {
+    MatrixGraph g1(4, true, MatrixGraph::edge_weight);
+    g1.insert_edge(0, 2);
+    g1.insert_edge(1, 0);
+    g1.insert_edge(1, 2);
+    g1.insert_edge(2, 3);
+    g1.insert_edge(3, 1);
+    int i = std::numeric_limits<int>::infinity();
+    g1.weights = {
+        { 0, i,-2, i},
+        { 4, 0, 3, i},
+        { i, i, 0, 2},
+        { i,-1, i, 0},
+    };
+    g1.floyd_warshall();
 }
 
 int main(int argc, char* argv[]) {
@@ -769,6 +789,8 @@ int main(int argc, char* argv[]) {
     // LISTA 10
     // test_djikstra();
     // LISTA 11
-    test_bellman_ford();
+    // test_bellman_ford();
+    // LISTA 12
+    test_floyd_warshall();
     return 0;
 }

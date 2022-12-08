@@ -66,18 +66,26 @@ class MatrixGraph {
         BFSLambdas() : on_entry(fnullc), on_not_entry(fnullc), on_exit(fnulld){};
     };
 
+    enum WeightType {
+        none,
+        edge_weight,
+        vertix_weight
+    };
+
     int v_count; // vertex count
     int e_count; // edge count
     std::vector<int> edges_per_vertex; // edge count
     bool directed;
     std::vector<std::vector<int>> adj_matrix;
+    WeightType weighted;
+    std::vector<std::vector<int>> weights;
     static const inline std::function<void(int, int, int, int)> fnulla = [](int a, int b, int c, int d) {};
     static const inline std::function<void(int, bool)> fnullb = [](int a, bool b) {};
     static const inline std::function<void(int, int)> fnullc = [](int a, int b) {};
     static const inline std::function<void(int)> fnulld = [](int a) {};
     
     // LISTA 1
-    MatrixGraph(int _n, bool _directed = true);
+    MatrixGraph(int _n, bool _directed = true, WeightType _weighted = none);
     MatrixGraph(ListGraph g); // EX 5
     MatrixGraph(std::string filename); // EX 7
     static MatrixGraph get_example_graph(bool directed = true) {
@@ -108,6 +116,7 @@ class MatrixGraph {
     bool is_simple_path(std::vector<int> seq); // EX 2
     bool has_path(int v0, int v1); // EX 3
     void show_path(int v0, int v1); // EX 4
+    void DFS_visit();
     // FUNCAO DE DFS DECLARADA NO ESCOPO PRIVATE
     void iterative_dfs(); // EX 5
     Arborescence DFS_arborescence();
@@ -156,23 +165,21 @@ class MatrixGraph {
     void BFS(BFSLambdas bfsl, int o);
     void BFS_visit(int o);
     void BFS_color(int o);
-    void display();
-    void display_visitados(std::vector<bool> &visitado);
-    std::vector<int> make_vertex_sequence();
-    std::vector<int> make_vertex_sequence_from_origin(int o);
-    std::vector<int> get_adj_vertices(int v);
     
     // LISTA 10
-    void djikstra(int o, std::vector<std::vector<int>> p);
+    void djikstra(int o);
     void djikstra_vertix(int o, std::vector<int> p);
-    void djikstra_heap(int o, std::vector<std::vector<int>> p);
+    void djikstra_heap(int o);
 
     // LISTA 11
-    void relax(int u, int v, std::vector<float> &d, std::vector<int> &pi, std::vector<std::vector<int>> p);
-    bool bellman_ford(int o, std::vector<std::vector<int>> p);
+    void relax(int u, int v, std::vector<float> &d, std::vector<int> &pi);
+    bool bellman_ford(int o);
 
     // LISTA 12
-    void floyd_warshall(int o, std::vector<std::vector<int>> p);
+    std::vector<std::vector<int>> floyd_warshall();
+
+    void display();
+    void display_visitados(std::vector<bool> &visitado);
   private:
     /*
     A função de dfs foi implementada de maneira genérica para que possa ser
@@ -183,10 +190,12 @@ class MatrixGraph {
     */
     void DFS(DFSLambdas &dfsl, int origin = 0, int depth = 0);
     void DFS_recursion(DFSLambdas &dfsl, int origin, int depth, int v0, int v);
-    void DFS_visit();
     bool DFS_colors();
-    bool is_adjacent(int v, int w);
     bool visit_colors(std::vector<int> &colors, int v);
+    bool is_adjacent(int v, int w);
+    std::vector<int> make_vertex_sequence();
+    std::vector<int> make_vertex_sequence_from_origin(int o);
+    std::vector<int> get_adj_vertices(int v);
 };
 
 #endif // GRAPH_MATRIXGRAPH_H

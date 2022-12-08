@@ -21,10 +21,11 @@ using std::vector, std::string;
 // Lista 1
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-MatrixGraph::MatrixGraph(int _v_count, bool _directed) {
+MatrixGraph::MatrixGraph(int _v_count, bool _directed, WeightType _weighted) {
 	v_count = _v_count;
 	e_count = 0;
     directed = _directed;
+    weighted = _weighted;
     edges_per_vertex = std::vector<int>(v_count, 0);
 	vector<int> inner_list(v_count);
 	for (int i = 0; i < v_count; i++)
@@ -711,7 +712,8 @@ void MatrixGraph::BFS_color(int o) {
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 // Lista 10
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-void MatrixGraph::djikstra(int o, std::vector<std::vector<int>> p) {
+void MatrixGraph::djikstra(int o) {
+    if (weighted != edge_weight) return;
     // std::vector<std::vector<float>> d(v_count, std::vector<float>(v_count, std::numeric_limits<float>::infinity()));
     std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
     std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
@@ -732,8 +734,8 @@ void MatrixGraph::djikstra(int o, std::vector<std::vector<int>> p) {
         }();
         s.push_back(u);
         for (auto v : get_adj_vertices(u)) {
-            if (d[v] > d[u] + p[u][v]) {
-                d[v] = d[u] + p[u][v];
+            if (d[v] > d[u] + weights[u][v]) {
+                d[v] = d[u] + weights[u][v];
                 pi[v] = u;
             }
         }
@@ -747,6 +749,8 @@ void MatrixGraph::djikstra(int o, std::vector<std::vector<int>> p) {
 }
 
 void MatrixGraph::djikstra_vertix(int o, std::vector<int> p) {
+    if (weighted != vertix_weight) return;
+
     // std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
     // std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
     // d[o] = 0;
@@ -780,7 +784,9 @@ void MatrixGraph::djikstra_vertix(int o, std::vector<int> p) {
     // std::cout << '\n';
 }
 
-void MatrixGraph::djikstra_heap(int o, std::vector<std::vector<int>> p) {
+void MatrixGraph::djikstra_heap(int o) {
+    if (weighted != edge_weight) return;
+
     std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
     std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
     d[o] = 0;
@@ -801,8 +807,8 @@ void MatrixGraph::djikstra_heap(int o, std::vector<std::vector<int>> p) {
         }();
         s.push_back(u);
         for (auto v : get_adj_vertices(u)) {
-            if (d[v] > d[u] + p[u][v]) {
-                d[v] = d[u] + p[u][v];
+            if (d[v] > d[u] + weights[u][v]) {
+                d[v] = d[u] + weights[u][v];
                 pi[v] = u;
             }
         }
@@ -815,14 +821,19 @@ void MatrixGraph::djikstra_heap(int o, std::vector<std::vector<int>> p) {
     std::cout << '\n';
 }
 
-void MatrixGraph::relax(int u, int v, std::vector<float> &d, std::vector<int> &pi, std::vector<std::vector<int>> p) {
-    if (d[v] > d[u] + p[u][v]) {
-        d[v] = d[u] + p[u][v];
+void MatrixGraph::relax(int u, int v, std::vector<float> &d, std::vector<int> &pi) {
+    if (d[v] > d[u] + weights[u][v]) {
+        d[v] = d[u] + weights[u][v];
         pi[v] = u;
     }
 }
 
-bool MatrixGraph::bellman_ford(int o, std::vector<std::vector<int>> p) {
+bool MatrixGraph::bellman_ford(int o) {
+    if (weighted != edge_weight) { 
+        std::cout << "O grafo não tem peso definido. Retornando falso...";
+        return false;
+    }
+
     std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
     std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
     d[o] = 0;
@@ -830,54 +841,49 @@ bool MatrixGraph::bellman_ford(int o, std::vector<std::vector<int>> p) {
     for (int i = 1; i < v_count - 1; i++) {
         for (auto u : make_vertex_sequence()) {
             for (auto v : get_adj_vertices(u)) {
-                relax(u, v, d, pi, p);
+                relax(u, v, d, pi);
             }
         }
     }
     for (auto u : make_vertex_sequence()) {
         for (auto v : get_adj_vertices(u)) {
-            if (d[v] > d[u] + p[u][v]) {
-            return false;
-            }
+            if (d[v] > d[u] + weights[u][v]) return false;
         }
     }
     return true;
 }
 
-void MatrixGraph::floyd_warshall(int o, std::vector<std::vector<int>> p) {
-    std::vector<std::vector<int>> d = adj_matrix;
-
+std::vector<std::vector<int>> MatrixGraph::floyd_warshall() {
+    std::vector<std::vector<int>> d(v_count, std::vector<int>(v_count));
+    if (!directed || weighted != edge_weight) return d;
     std::vector<int> vertices = make_vertex_sequence();
-    for (auto i : vertices) {
-        for (auto j : vertices) {
-            for (auto k : vertices) {
-                if (d[i][k] + d[k][j] < d[i][j])
-                    d[i][j] = d[i][k] + d[k][j];
+    for (auto v : vertices) {
+        for (auto w : vertices) {
+            if (v == w)
+                d[v][w] = 0;
+            else if (is_adjacent(v, w))
+                d[v][w] = weights[v][w];
+            else
+                d[v][w] = std::numeric_limits<int>::infinity();
+        }
+    }
+
+    for (auto k : vertices) {
+        for (auto i : vertices) {
+            for (auto j : vertices) {
+                d[i][j] = std::min(d[i][j], d[i][k] + d[k][j]);
             }
         }
     }
-
+    std::cout << "Pesos: \n";
     for (auto i : vertices) {
         for (auto j : vertices) {
-            if(d[i][j] == INF)
-                print("INF", end=" ");
-                std::cout << "INF ";
-            else
-                std::cout << d[i][j] << " ";
-                print(, end="  ");
+            std::cout << (d[i][j] == std::numeric_limits<int>::infinity() ? "∞" : std::to_string(d[i][j])) << " ";
         }
+        std::cout << '\n';
     }
-
-    std::cout << "Matriz floyd-warshall:\n";
-    for
-    for i in range(g.v):
-        for j in range(g.v):
-            if(distance[i][j] == INF):
-                print("INF", end=" ")
-            else:
-                print(distance[i][j], end="  ")
-        print(" ")
-
+    
+    return d;
 }
 
 void MatrixGraph::DFS(DFSLambdas &dfsl, int origin, int depth){	
@@ -1012,7 +1018,7 @@ std::vector<int> MatrixGraph::make_vertex_sequence_from_origin(int o) {
 }
 
 bool MatrixGraph::is_adjacent(int v, int w) {
-    return adj_matrix[v][w] || (directed ? 0 : adj_matrix[w][v]);
+    return adj_matrix[v][w] || (directed ? false : adj_matrix[w][v]);
 }
 
 void MatrixGraph::display() {
