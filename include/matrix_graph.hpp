@@ -190,8 +190,6 @@ class MatrixGraph {
     */
     void DFS(DFSLambdas &dfsl, int origin = 0, int depth = 0);
     void DFS_recursion(DFSLambdas &dfsl, int origin, int depth, int v0, int v);
-    bool DFS_colors();
-    bool visit_colors(std::vector<int> &colors, int v);
     bool is_adjacent(int v, int w);
     std::vector<int> make_vertex_sequence();
     std::vector<int> make_vertex_sequence_from_origin(int o);

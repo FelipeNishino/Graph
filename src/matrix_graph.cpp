@@ -349,7 +349,28 @@ bool MatrixGraph::has_cicle_with_arborescence() {
 }
 
 bool MatrixGraph::has_cicle_with_colors() {
-	return DFS_colors();
+    DFSLambdas dfsl;
+    bool res = false;
+    std::vector<int> colors = vector<int>(v_count, 0);
+
+    dfsl.entry_condition = [&colors](int origin, int u, int v, int d)->bool {
+        return colors[v] == 0;
+	};
+	dfsl.on_step = [&colors](int origin, int u, int v, int depth) {
+        colors[v] = 1;
+	};
+    dfsl.on_skip = [&colors, &res](int origin, int u, int v, int depth) {
+        res |= colors[v] == 1;
+	};
+	dfsl.on_return = [&colors](int origin, int u, int v, int d) {
+        colors[v] = 2;
+	};
+    
+	DFS(dfsl, 0);
+    return res;
+    // colors[v] == 0
+
+	// return DFS_colors();
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -979,31 +1000,16 @@ void MatrixGraph::DFS_visit(){
 	DFS(dfsl);
 }
 
-bool MatrixGraph::DFS_colors() {
-    std::vector<int> colors = vector<int>(v_count, 0);
-	// Branco == 0, Cinza == 1, Preto == 2
-	for (auto const &v : make_vertex_sequence()) {
-		if (colors[v] == 0) {
-            if (visit_colors(colors, v)) return true;
-        }
-	}
-    return false;
-}
-
-bool MatrixGraph::visit_colors(std::vector<int> &colors, int v) {
-    colors[v] = 1;
-    
-    for (auto const &w : get_adj_vertices(v)) {
-        switch (colors[w]) {
-            case 0:
-                if (!visit_colors(colors, w)) break;
-            case 1:
-                return true;
-        }
-    }
-    colors[v] = 2;
-	return false;
-}
+// bool MatrixGraph::DFS_colors() {
+//     std::vector<int> colors = vector<int>(v_count, 0);
+// 	// Branco == 0, Cinza == 1, Preto == 2
+// 	for (auto const &v : make_vertex_sequence()) {
+// 		if (colors[v] == 0) {
+//             if (visit_colors(colors, v)) return true;
+//         }
+// 	}
+//     return false;
+// }
 
 std::vector<int> MatrixGraph::get_adj_vertices(int v) {
     std::vector<int> adj_v;
