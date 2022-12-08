@@ -832,38 +832,37 @@ void MatrixGraph::djikstra_vertix(int o, std::vector<int> p) {
 void MatrixGraph::djikstra_heap(int o) {
     if (weighted != edge_weight) return;
 
-    std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
-    std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
-    d[o] = 0;
-    std::vector<int> s;
-
-    int n = v_count;
-    while (n > 0) {
-        int u = [this, s, d]()->int{
-            float menor = std::numeric_limits<float>::infinity();
-            int min = 0;
-            for (auto u : make_vertex_sequence()) {
-                if (find(s.begin(), s.end(), u) == s.end() && d[u] < menor) {
-                    menor = d[u];
-                    min = u;
-                }
-            }
-            return min;
-        }();
-        s.push_back(u);
-        for (auto v : get_adj_vertices(u)) {
-            if (d[v] > d[u] + weights[u][v]) {
-                d[v] = d[u] + weights[u][v];
-                pi[v] = u;
-            }
-        }
-        n--;
-    }
-    std::cout << "Menor caminho: ";
-    for (auto v : s) {
-        std::cout << " -> " << v;
-    }
-    std::cout << '\n';
+    // std::vector<float> d(v_count, std::numeric_limits<float>::infinity());
+    // std::vector<int> pi(v_count, std::numeric_limits<int>::lowest());
+    // d[o] = 0;
+    // std::vector<int> s;
+    // int n = v_count;
+    // while (n > 0) {
+    //     int u = [this, s, d]()->int{
+    //         float menor = std::numeric_limits<float>::infinity();
+    //         int min = 0;
+    //         for (auto u : make_vertex_sequence()) {
+    //             if (find(s.begin(), s.end(), u) == s.end() && d[u] < menor) {
+    //                 menor = d[u];
+    //                 min = u;
+    //             }
+    //         }
+    //         return min;
+    //     }();
+    //     s.push_back(u);
+    //     for (auto v : get_adj_vertices(u)) {
+    //         if (d[v] > d[u] + weights[u][v]) {
+    //             d[v] = d[u] + weights[u][v];
+    //             pi[v] = u;
+    //         }
+    //     }
+    //     n--;
+    // }
+    // std::cout << "Menor caminho: ";
+    // for (auto v : s) {
+    //     std::cout << " -> " << v;
+    // }
+    // std::cout << '\n';
 }
 
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -999,17 +998,6 @@ void MatrixGraph::DFS_visit(){
     
 	DFS(dfsl);
 }
-
-// bool MatrixGraph::DFS_colors() {
-//     std::vector<int> colors = vector<int>(v_count, 0);
-// 	// Branco == 0, Cinza == 1, Preto == 2
-// 	for (auto const &v : make_vertex_sequence()) {
-// 		if (colors[v] == 0) {
-//             if (visit_colors(colors, v)) return true;
-//         }
-// 	}
-//     return false;
-// }
 
 std::vector<int> MatrixGraph::get_adj_vertices(int v) {
     std::vector<int> adj_v;
