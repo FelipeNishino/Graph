@@ -1,0 +1,48 @@
+void MatrixGraph::legacy_DFS_visitar(DFSLambdas &dfsl, int origin, int depth){
+	std::vector<bool> visitado = vector<bool>(v_count, false);
+	
+	for (auto const &w : [origin](int n)->vector<int>{vector<int> v(n); std::iota(v.begin(), v.end(), 0); v.erase(v.begin() + origin), v.insert(v.begin(), origin);return v;}(v_count)) {
+		if (!visitado[w]) legacy_visitar(dfsl, w, depth, visitado, -1, w);
+	}
+}
+
+void MatrixGraph::legacy_visitar(DFSLambdas &dfsl, int origin, int depth, std::vector<bool> &visitado, int u, int v) {
+    Logger::log(Logger::LOG_DEBUG, "origin %d, visitando %d", origin, v);
+	visitado[v] = true;
+	bool visitou = false;
+    Logger::log(Logger::LOG_DEBUG, "Vai executar on step");
+	dfsl.on_step(origin, u, v, depth);
+	for (auto const &w : get_adj_vertices(v)) {
+        Logger::log(Logger::LOG_DEBUG, "Checando se %d se conecta a %d", v, w);
+        display_visitados(visitado);
+		if (Logger::output_level() == Logger::LOG_DEBUG) display();
+        if (!visitado[w]) {
+            Logger::log(Logger::LOG_DEBUG, "vai visitar %d", w);
+
+            legacy_visitar(dfsl, origin, depth + 1, visitado, v, w);
+            visitou = true;
+        }
+        else {
+            dfsl.on_skip(origin, u, v, depth);
+            Logger::log(Logger::LOG_DEBUG, "Não visitou %d", w);
+        }
+	}
+	if (!visitou) {
+        Logger::log(Logger::LOG_DEBUG, "Vai executar on end");
+		dfsl.on_end(origin, u, v, depth);
+    }
+    Logger::log(Logger::LOG_DEBUG, "Vai executar on return");
+	dfsl.on_return(origin, u, v, depth);
+}
+
+void MatrixGraph::display_visitados(std::vector<bool> &visitado) {
+    std::string output = " Visitados:\n";
+	for(unsigned int i = 0; i < visitado.size(); i++) {
+		output += "Vertex ";
+        output += std::to_string(i);
+        output += " - ";
+        output += (visitado[i] ? "true" : "false" );
+        output += '\n';
+	}
+    Logger::log(Logger::LOG_DEBUG, output);
+}
