@@ -232,17 +232,17 @@ void test_has_arch() {
     arch_type_to_str(7, 1, mg.has_arch(7, 1));
 }
 
-void test_cicle() {
+void test_cycle() {
     MatrixGraph mg(4);
     mg.insert_edge(0, 1);
     mg.insert_edge(1, 2);
     mg.insert_edge(2, 3);
     mg.insert_edge(3, 1);
     mg.display();
-    std::cout << "O grafo " << (mg.has_cicle_with_path() ? "tem ciclo" : "não tem ciclo") << std::endl;
-    std::cout << "O grafo " << (mg.has_cicle_with_stack() ? "tem ciclo" : "não tem ciclo") << std::endl;
-    std::cout << "O grafo " << (mg.has_cicle_with_arborescence() ? "tem ciclo" : "não tem ciclo") << std::endl;
-    std::cout << "O grafo " << (mg.has_cicle_with_colors() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cycle_with_path() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cycle_with_stack() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cycle_with_arborescence() ? "tem ciclo" : "não tem ciclo") << std::endl;
+    std::cout << "O grafo " << (mg.has_cycle_with_colors() ? "tem ciclo" : "não tem ciclo") << std::endl;
 }
 
 void test_topologic_sort() {
@@ -771,7 +771,7 @@ int main(int argc, char* argv[]) {
     // test_arborescence();
     // test_has_arch();
     // LISTA 3
-    // test_cicle();
+    // test_cycle();
     // LISTA 4
     // test_topologic_sort();
     // LISTA 5

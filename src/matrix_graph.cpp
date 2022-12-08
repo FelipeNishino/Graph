@@ -301,7 +301,7 @@ Arborescence::ArchCategory MatrixGraph::has_arch(int v, int w) {
 // Lista 3
 // =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-bool MatrixGraph::has_cicle_with_path() {
+bool MatrixGraph::has_cycle_with_path() {
 	for (auto &v : make_vertex_sequence()) {
         for (auto &w : make_vertex_sequence()) {
             if(is_adjacent(v, w)) {
@@ -312,7 +312,7 @@ bool MatrixGraph::has_cicle_with_path() {
 	return false;
 }
 
-bool MatrixGraph::has_cicle_with_stack() {
+bool MatrixGraph::has_cycle_with_stack() {
 	DFSLambdas dfsl;
     std::vector<bool> in_stack(v_count, false);
     bool res = false;
@@ -336,7 +336,7 @@ bool MatrixGraph::has_cicle_with_stack() {
     return res;
 }
 
-bool MatrixGraph::has_cicle_with_arborescence() {
+bool MatrixGraph::has_cycle_with_arborescence() {
 	DFSLambdas dfsl;
     Arborescence a = DFS_arborescence();
     
@@ -348,7 +348,7 @@ bool MatrixGraph::has_cicle_with_arborescence() {
     return false;
 }
 
-bool MatrixGraph::has_cicle_with_colors() {
+bool MatrixGraph::has_cycle_with_colors() {
     DFSLambdas dfsl;
     bool res = false;
     std::vector<int> colors = vector<int>(v_count, 0);

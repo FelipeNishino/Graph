@@ -123,10 +123,10 @@ class MatrixGraph {
     Arborescence::ArchCategory has_arch(int v, int w); // EX 6
 
     // LISTA 3
-    bool has_cicle_with_path(); // EX 1
-    bool has_cicle_with_stack(); // EX 2
-    bool has_cicle_with_arborescence(); // EX 3
-    bool has_cicle_with_colors(); // EX 4
+    bool has_cycle_with_path(); // EX 1
+    bool has_cycle_with_stack(); // EX 2
+    bool has_cycle_with_arborescence(); // EX 3
+    bool has_cycle_with_colors(); // EX 4
 
     // LISTA 4
     std::list<int> topologic_sort();  // EX 1
