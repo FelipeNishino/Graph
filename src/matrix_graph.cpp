@@ -236,6 +236,30 @@ void MatrixGraph::show_path(int u, int v1) {
 	
 }
 
+void MatrixGraph::iterative_dfs(){
+	std::vector<bool> visitado = vector<bool>(v_count, false);
+
+    std::stack<int> path;
+    for (auto &u : make_vertex_sequence()) {
+        if (!visitado[u]) {
+            path.push(u); 
+            visitado[u] = true;
+            // std::cout << "Visita " << path.top() << '\n';
+        }
+        while (!path.empty()) {
+            int v = path.top();
+            path.pop();
+            std::cout << "Visita " << v << '\n';
+
+            for (int w = v_count-1; w >= 0; w--) {
+                if (!is_adjacent(v, w) || visitado[w]) continue;
+                path.push(w);
+                visitado[w] = true;
+            }
+        }
+    }
+}
+
 Arborescence MatrixGraph::DFS_arborescence() {
 	DFSLambdas dfsl;
     Arborescence a(v_count);
@@ -546,7 +570,7 @@ void MatrixGraph::bridge_detection() {
         std::cout << "O grafo não possui pontes.\n";
     }
 }
-// TODO: o vertice 0 sempre eh considerado um ponto de articulação
+// TODO(Fix): o vertice 0 sempre eh considerado um ponto de articulação
 void MatrixGraph::articulation_detection() {
     int tempo{};
     DFSLambdas dfsl;
@@ -821,6 +845,10 @@ void MatrixGraph::djikstra_heap(int o) {
     std::cout << '\n';
 }
 
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// Lista 11
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
 void MatrixGraph::relax(int u, int v, std::vector<float> &d, std::vector<int> &pi) {
     if (d[v] > d[u] + weights[u][v]) {
         d[v] = d[u] + weights[u][v];
@@ -852,6 +880,10 @@ bool MatrixGraph::bellman_ford(int o) {
     }
     return true;
 }
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// Lista 12
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 std::vector<std::vector<int>> MatrixGraph::floyd_warshall() {
     std::vector<std::vector<int>> d(v_count, std::vector<int>(v_count));
@@ -971,30 +1003,6 @@ bool MatrixGraph::visit_colors(std::vector<int> &colors, int v) {
     }
     colors[v] = 2;
 	return false;
-}
-
-void MatrixGraph::iterative_dfs(){
-	std::vector<bool> visitado = vector<bool>(v_count, false);
-
-    std::stack<int> path;
-    for (auto &u : make_vertex_sequence()) {
-        if (!visitado[u]) {
-            path.push(u); 
-            visitado[u] = true;
-            // std::cout << "Visita " << path.top() << '\n';
-        }
-        while (!path.empty()) {
-            int v = path.top();
-            path.pop();
-            std::cout << "Visita " << v << '\n';
-
-            for (int w = v_count-1; w >= 0; w--) {
-                if (!is_adjacent(v, w) || visitado[w]) continue;
-                path.push(w);
-                visitado[w] = true;
-            }
-        }
-    }
 }
 
 std::vector<int> MatrixGraph::get_adj_vertices(int v) {
